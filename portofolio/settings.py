@@ -22,6 +22,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "myportofolio-hasya.azzahra.pws.cs.ui.ac.id",
     "*.pws.cs.ui.ac.id",
+    "*",
 ]
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 

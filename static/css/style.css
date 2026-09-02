@@ -172,6 +172,74 @@ h1, .brand {
     border: 3px solid var(--ink);
 }
 
+.portfolio-section {
+    padding: 3.5rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.section-title {
+    font-family: "Space Grotesk", -apple-system, sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 1.75rem;
+}
+
+.skills-grid, .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-card, .project-card {
+    background-color: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.skill-card:hover, .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+    border-color: var(--accent);
+}
+
+.skill-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.skill-card h3, .project-card h3 {
+    font-family: "Space Grotesk", -apple-system, sans-serif;
+    font-size: 1.15rem;
+    margin-bottom: 0.3rem;
+}
+
+.role {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-bottom: 0.6rem;
+}
+
+.skill-card p, .project-card p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.tag {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    background-color: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
 /* Footer & Responsive */
 .site-footer {
     padding: 1.5rem;

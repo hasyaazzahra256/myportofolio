@@ -32,7 +32,7 @@ h1, .brand {
     padding: 0 1.5rem;
 }
 
-/* Header (Flexbox) */
+/* Header */
 .site-header {
     border-bottom: 1px solid var(--line);
 }
@@ -263,5 +263,9 @@ h1, .brand {
 
     .social-links {
         justify-content: flex-start;
+    }
+
+    .skills-grid, .projects-grid {
+        grid-template-columns: 1fr;
     }
 }

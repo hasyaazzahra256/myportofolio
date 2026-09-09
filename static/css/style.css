@@ -8,8 +8,8 @@
 :root {
     --ink: #1c1917;
     --paper: #faf6f0;
-    --accent: #d95d39;
-    --accent-dark: #a8442a;
+    --accent: #d8aaf4;
+    --accent-dark: #934ace;
     --line: #e3d9c9;
     --text-muted: #6b6459;
     --radius: 4px;
@@ -268,4 +268,115 @@ h1, .brand {
     .skills-grid, .projects-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.experience-section {
+    padding: 4rem 0;
+    border-top: 1px solid var(--line);
+}
+.section-kicker {
+    color: var(--accent-dark);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.experience-section h1 {
+    margin: 0.4rem 0 1.5rem;
+    font-size: 2rem;
+}
+.experience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+.experience-card {
+    padding: 1.25rem;
+    background-color: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+.experience-category {
+    color: var(--accent-dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.experience-card h2 {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+}
+.experience-description,
+.empty-state {
+    color: var(--text-muted);
+}
+.experience-status {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* page experience */
+.experience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.experience-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.experience-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.experience-category {
+    display: inline-block;
+    align-self: flex-start;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.experience-card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #111827;
+}
+
+.experience-card .role {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.experience-description {
+    font-size: 0.95rem;
+    color: #374151;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+.experience-status {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #059669;
+    margin-top: auto;
 }

@@ -11,33 +11,29 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
-
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "myportofolio-hasya.azzahra.pws.cs.ui.ac.id",
-    "*.pws.cs.ui.ac.id",
-    "*",
-]
-PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Check if environment is production (PWS)
+PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = not PRODUCTION
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mfey+rhz=kek++90hyk5_39d)&%z)gp&siq+pu6nzn0*h94s*2'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "hasya.azzahra-myportofolio.pws.cs.ui.ac.id",
+    "*.pws.cs.ui.ac.id",
+]
 
 
 # Application definition
@@ -54,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Tambahkan baris ini
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,11 +63,12 @@ ROOT_URLCONF = 'portofolio.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates', 
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -82,9 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portofolio.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 # Database configuration
 if PRODUCTION:
@@ -111,7 +105,6 @@ else:
 
 
 # Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -130,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -142,7 +134,6 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -151,7 +142,6 @@ WHITENOISE_USE_FINDERS = True
 
 
 # Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 MAILERS = {
     'default': {

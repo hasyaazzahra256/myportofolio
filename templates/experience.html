@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - {{ name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
+            <nav>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="experience-section" id="experience">
+            <div class="container">
+                <p class="section-kicker">Perjalanan saya sejauh ini</p>
+                <h1>Organizational Experience</h1>
+                
+                <div class="experience-grid">
+                    {% for experience in experience_list %}
+                        <article class="experience-card">
+                            <span class="experience-category">
+                                {{ experience.get_category_display }}
+                            </span>
+                            <h2>{{ experience.title }}</h2>
+                            <p class="experience-description">
+                                {{ experience.description }}
+                            </p>
+                            {% if experience.is_ongoing %}
+                                <p class="experience-status">Sedang berlangsung</p>
+                            {% else %}
+                                <p class="experience-status">Selesai</p>
+                            {% endif %}
+                        </article>
+                    {% empty %}
+                        <article class="experience-card">
+                            <span class="experience-category">Team Leadership</span>
+                            <h2>Person In Charge of Human Resources</h2>
+                            <p class="role">Open House Fasilkom UI &middot; Jul 2026 - Present</p>
+                            <p class="experience-description">Leading the HR division, public speaking, coordination and event execution.</p>
+                            <p class="experience-status">Sedang berlangsung</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">Public Speaking & Communications</span>
+                            <h2>Staff of Public Relations</h2>
+                            <p class="role">BEM Fasilkom UI &middot; Jul 2026 - Present</p>
+                            <p class="experience-description">Handling external communications, public speaking initiatives and institutional relations across Fasilkom UI.</p>
+                            <p class="experience-status">Sedang berlangsung</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">People Management</span>
+                            <h2>Member of People Operations</h2>
+                            <p class="role">RISTEK Fasilkom UI &middot; Mar 2026 - Present</p>
+                            <p class="experience-description">Managing staff onboarding, contributing to Product Management internal class materials and coordinating engagement programs.</p>
+                            <p class="experience-status">Sedang berlangsung</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">Talent Management</span>
+                            <h2>HRD of Product Management Academy</h2>
+                            <p class="role">COMPFEST 18 &middot; Mar 2026 - Present</p>
+                            <p class="experience-description">Managing open recruitment for Product Management Academy staff, human resource development and participant engagement.</p>
+                            <p class="experience-status">Sedang berlangsung</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">UI Design & Procurement</span>
+                            <h2>Procurement Intern</h2>
+                            <p class="role">WCE 2026 by UI Women in Business &middot; Mar 2026 - Aug 2026</p>
+                            <p class="experience-description">Served as PIC for event website development, designing interfaces in Figma and coordinating vendor/procurement logistics.</p>
+                            <p class="experience-status">Selesai</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">Human Capital</span>
+                            <h2>Staff of Human Resources Development</h2>
+                            <p class="role">BETIS Fasilkom UI &middot; Jan 2026 - Aug 2026</p>
+                            <p class="experience-description">Contributed to internal human resource strategy, member development programs and internal operational support.</p>
+                            <p class="experience-status">Selesai</p>
+                        </article>
+
+                        <article class="experience-card">
+                            <span class="experience-category">Academic & Event</span>
+                            <h2>Staff of Quiz Division</h2>
+                            <p class="role">Olimpiade Ilmiah Mahasiswa UI (OIM UI) &middot; Sep 2025 - Dec 2025</p>
+                            <p class="experience-description">Prepared quiz questions, served as Master of Ceremony during competition sessions and acted as an assessment judge.</p>
+                            <p class="experience-status">Selesai</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+        </div>
+    </footer>
+</body>
+</html>

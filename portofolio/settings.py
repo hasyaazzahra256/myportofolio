@@ -30,9 +30,9 @@ SECRET_KEY = 'django-insecure-mfey+rhz=kek++90hyk5_39d)&%z)gp&siq+pu6nzn0*h94s*2
 
 ALLOWED_HOSTS = [
     "localhost",
-    "10.119.106.139",
-    "hasya.azzahra-myportofolio.pws.cs.ui.ac.id",
-    "*.pws.cs.ui.ac.id",
+    "127.0.0.1",
+    "hasya-azzahra-myportofolio.pws.cs.ui.ac.id",
+    "*",
 ]
 
 

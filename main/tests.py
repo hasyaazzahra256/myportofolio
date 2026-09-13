@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.test import TestCase, Client
 from django.utils import timezone
-from main.models import Experience
+from main.models import Experience, Project 
 
 
 class MainTest(TestCase):
@@ -58,3 +58,24 @@ class MainTest(TestCase):
             ended_at=past_end,
         )
         self.assertFalse(exp.is_ongoing)
+
+    def test_project_page_accessible_and_uses_correct_template(self):
+        response = self.client.get("/projects/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "project.html")
+
+    def test_project_page_shows_data(self):
+        Project.objects.create(
+            title="Aplikasi Portofolio",
+            description="Membuat web portofolio dengan Django.",
+            technology="Django & Tailwind",
+            project_url="https://github.com"
+        )
+        response = self.client.get("/projects/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Aplikasi Portofolio")
+
+    def test_empty_project_page(self):
+        response = self.client.get("/projects/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Belum ada proyek")

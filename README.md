@@ -38,3 +38,24 @@ meski AI bantu banget buat analisis kode  dengan cepat, tetep ada beberapa hal y
 
 3. **Pemeriksaan Tanggal Pengalaman Organisasi**:
    * Perbaikan: Semua bulan dan tahun di 7 kartu pengalaman organisasi (kayak COMPFEST 18, RISTEK, BEM Fasilkom UI, WCE 2026, BETIS, Open House, dan OIM UI) aku cek dan sesuaikan manual satu per satu biar jadwalnya beneran pas.
+
+### Tugas 2
+
+1. **Alur Permintaan Pengguna (Request-Response Cycle):**
+   - User mengetik atau mengklik link `/projects/` di browser.
+   - Permintaan masuk dulu ke `portofolio/urls.py`, lalu diteruskan ke `main/urls.py`.
+   - Di `main/urls.py`, path `'projects/'` dicocokkan dan memanggil fungsi `show_project` yang ada di `views.py`.
+   - `views.py` minta data ke model `Project` pakai query `Project.objects.all()`.
+   - Model ngambil data dari database dan mengembalikannya ke `views.py`.
+   - `views.py` masukin data itu ke dalam `context`, lalu ngirim ke template `project.html`.
+   - `project.html` merender datanya pakai Django Template Language (DTL) jadi tampilan HTML akhir yang dilihat di browser.
+
+2. **Alasan Data Disimpan di Model:**
+   - **Separation of Concerns:** Memisahkan data dan tampilan biar kode nggak berantakan.
+   - **Gampang di-maintain:** Kalau mau nambah atau ubah data proyek, tinggal olah dari database/admin tanpa perlu bongkar-bongkar file HTML lagi.
+   - **Scalable:** Lebih siap kalau nanti mau dibikin fitur form input, search, atau filter data.
+
+3. **Perbedaan `makemigrations` dan `migrate`:**
+   - **`makemigrations`**: Cuma menyiapkan atau membuat blueprint (berkas migrasi) berdasarkan perubahan di `models.py`. Database asli belum berubah di tahap ini.
+   - **`migrate`**: Eksekusi blueprint tersebut ke database biar tabelnya beneran dibuat atau diperbarui.
+   - **Contoh:** Pas kita nambahin model `Project` di `models.py`, kita jalanin `python manage.py makemigrations` buat ngebikin file `0002_project.py`, baru abis itu jalanin `python manage.py migrate` buat bikin tabel `main_project` di database.

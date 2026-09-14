@@ -37,20 +37,22 @@
                             {% endif %}
 
                             <div class="card-body">
-                                <span class="experience-category">
-                                    {{ experience.get_category_display }}
-                                </span>
                                 <h2>{{ experience.title }}</h2>
                                 
                                 <div class="experience-description">
                                     {{ experience.description|linebreaksbr }}
                                 </div>
 
-                                {% if experience.is_ongoing %}
-                                    <p class="experience-status">Present</p>
-                                {% else %}
-                                    <p class="experience-status" style="color: var(--text-muted);">Selesai</p>
-                                {% endif %}
+                                <p class="experience-date">
+                                    {% if experience.start_date %}
+                                        {{ experience.start_date|date:"F Y" }} - 
+                                    {% endif %}
+                                    {% if experience.is_ongoing %}
+                                        Present
+                                    {% else %}
+                                        {{ experience.ended_at|date:"F Y" }}
+                                    {% endif %}
+                                </p>
                             </div>
                         </article>
                     {% empty %}

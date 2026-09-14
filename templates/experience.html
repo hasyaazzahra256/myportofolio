@@ -20,29 +20,43 @@
     </header>
 
     <main>
-        <section class="portfolio-section" id="experience">
+        <section class="portfolio-section">
             <div class="container">
-                <p class="hero-kicker" style="text-align: center;">✦ ORGANIZATIONAL JOURNEY ✦</p>
-                <h1 class="section-title">Experience</h1>
+                <div class="section-header" style="text-align: center;">
+                    <p class="hero-kicker">✦ ORGANIZATIONAL JOURNEY ✦</p>
+                    <h1 class="section-title">Experience</h1>
+                </div>
                 
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
-                            <span class="experience-category">
-                                {{ experience.get_category_display }}
-                            </span>
-                            <h2>{{ experience.title }}</h2>
-                            <p class="experience-description">
-                                {{ experience.description }}
-                            </p>
-                            {% if experience.is_ongoing %}
-                                <p class="experience-status">Present</p>
-                            {% else %}
-                                <p class="experience-status" style="color: var(--text-muted);">Selesai</p>
+                            {% if experience.thumbnail %}
+                                <div class="card-image-wrapper">
+                                    <img src="{{ experience.thumbnail }}" alt="{{ experience.title }}" class="card-thumbnail">
+                                </div>
                             {% endif %}
+
+                            <div class="card-body">
+                                <span class="experience-category">
+                                    {{ experience.get_category_display }}
+                                </span>
+                                <h2>{{ experience.title }}</h2>
+                                
+                                <div class="experience-description">
+                                    {{ experience.description|linebreaksbr }}
+                                </div>
+
+                                {% if experience.is_ongoing %}
+                                    <p class="experience-status">Present</p>
+                                {% else %}
+                                    <p class="experience-status" style="color: var(--text-muted);">Selesai</p>
+                                {% endif %}
+                            </div>
                         </article>
                     {% empty %}
-                        <p style="text-align: center; color: var(--text-muted);">Belum ada pengalaman</p>
+                        <div class="empty-state">
+                            <p>No experiences to display yet.</p>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

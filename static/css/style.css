@@ -320,3 +320,32 @@ main {
     color: var(--text-muted);
     font-size: 1rem;
 }
+
+/* Card Thumbnail & Layout Fix */
+.experience-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card-image-wrapper {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--pink-soft);
+}
+
+.card-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.experience-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+}

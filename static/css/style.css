@@ -330,9 +330,8 @@ main {
 
 .card-image-wrapper {
     width: 100%;
-    height: 180px;
-    margin-bottom: 1rem;
-    border-radius: 12px;
+    height: 360px; 
+    border-radius: 14px;
     overflow: hidden;
     background-color: var(--pink-soft);
 }
@@ -340,7 +339,8 @@ main {
 .card-thumbnail {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; 
+    object-position: center; 
 }
 
 .experience-description {

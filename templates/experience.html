@@ -45,12 +45,12 @@
 
                                 <p class="experience-date">
                                     {% if experience.start_date %}
-                                        {{ experience.start_date|date:"F Y" }} - 
+                                        {{ experience.start_date }}
                                     {% endif %}
                                     {% if experience.is_ongoing %}
-                                        Present
-                                    {% else %}
-                                        {{ experience.ended_at|date:"F Y" }}
+                                        - Present
+                                    {% elif experience.ended_at %}
+                                        - {{ experience.ended_at }}
                                     {% endif %}
                                 </p>
                             </div>

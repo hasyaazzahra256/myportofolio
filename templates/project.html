@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects - {{ name }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -23,23 +20,23 @@
     </header>
 
     <main>
-        <section class="experience-section">
+        <section class="portfolio-section">
             <div class="container">
-                <p class="section-kicker">Karya & Proyek</p>
-                <h1>My Projects</h1>
-                
-                <div class="experience-grid">
+                <div class="section-header">
+                    <p class="hero-kicker">✦ FEATURED PROJECTS ✦</p>
+                    <h1 class="section-title">My Projects</h1>
+                </div>
+
+                <div class="projects-grid">
                     {% for project in project_list %}
-                        <article class="experience-card">
-                            <span class="experience-category">{{ project.technology }}</span>
-                            <h2>{{ project.title }}</h2>
-                            <p class="experience-description">{{ project.description }}</p>
-                            {% if project.project_url %}
-                                <p><a href="{{ project.project_url }}" target="_blank">Lihat Proyek</a></p>
-                            {% endif %}
+                        <article class="project-card">
+                            <h3>{{ project.title }}</h3>
+                            <p>{{ project.description }}</p>
                         </article>
                     {% empty %}
-                        <p>Belum ada proyek</p>
+                        <div class="empty-state">
+                            <p>No projects to display yet.</p>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

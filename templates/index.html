@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ name }} - Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -23,88 +20,75 @@
     </header>
 
     <main>
+        <!-- Hero Section -->
         <section class="hero" id="profile">
             <div class="container hero-grid">
                 <div class="hero-identity">
-                   <p class="hero-kicker">{{ study_program }} &middot; Universitas Indonesia</p>
-                    <h1>{{ name }}</h1> 
-                </div>
-                
-                <div class="hero-photo">
-                    <div class="photo-block"></div>
-                    <img class="avatar" src="{% static 'img/hasyaaa.png' %}" alt="Photo of {{ name }}">
-                    </div>
-
-                    <div class="hero-details">
-                        <p class="bio">{{ bio }}</p>
-                    <dl class="meta-list">
-                        <div class="meta-row">
-                            <dt>NPM</dt>
-                            <dd>{{ npm }}</dd>
-                        </div>
-                        <div class="meta-row">
-                            <dt>Program</dt>
-                            <dd>{{ study_program }}</dd>
-                        </div>
-                    </dl>
-
+                    <p class="hero-kicker">✦ {{ study_program }} ✦</p>
+                    <h1>Hi, I'm {{ name }}</h1> 
+                    <div class="hero-role">Information Systems Student & Creative Enthusiast</div>
+                    
                     <div class="social-links">
                         <a href="https://github.com/hasyaazzahra256" class="social-link" target="_blank">GitHub</a>
                         <a href="https://linkedin.com/in/hasya-azzahra-rangkuti-ba1794378/" class="social-link" target="_blank">LinkedIn</a>
                         <a href="mailto:hasyazahra25@gmail.com" class="social-link">Email</a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="portfolio-section" id="skills">
-            <div class="container">
-                <h2 class="section-title">Skills & Interests</h2>
-                <div class="skills-grid">
-                    
-                    <div class="skill-card">
-                        <h3>UI Design & Visuals</h3>
-                        <p>Figma, Web Layout Design, Wireframing, Visual Assets</p>
+                
+                <div class="hero-photo">
+                    <div class="avatar-wrapper">
+                        <img class="avatar" src="{% static 'img/hasyaaa.png' %}" alt="Photo of {{ name }}">
                     </div>
-
-                    <div class="skill-card">
-                        <h3>Technical & Tools</h3>
-                        <p>Basic Python & Java, Git/GitHub</p>
-                    </div>
-
-                    <div class="skill-card">
-                        <h3>Management & Soft Skills</h3>
-                        <p>Public Speaking, Event Coordination, Team Leadership, Problem Solving</p>
-                    </div>
-
                 </div>
             </div>
         </section>
 
+        <!-- Introducing / About Box -->
+        <section class="container">
+            <div class="stamp-card">
+                <div class="stamp-ribbon">🎀 Introducing 🎀</div>
+                <p class="bio" style="text-align: center; font-size: 1.05rem; margin-bottom: 0;">
+                    {{ bio }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Skills & Interests -->
+        <section class="portfolio-section" id="skills">
+            <div class="container">
+                <h2 class="section-title">Interest & Skills</h2>
+                <div class="pill-grid" style="justify-content: center; max-width: 700px; margin: 0 auto 2rem;">
+                    <span class="pill-tag">UI Design</span>
+                    <span class="pill-tag">Public Speaking</span>
+                    <span class="pill-tag">Event Coordination</span>
+                    <span class="pill-tag">Python & Java</span>
+                    <span class="pill-tag">Team Leadership</span>
+                    <span class="pill-tag">Git & GitHub</span>
+                    <span class="pill-tag">Visual Assets</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education -->
         <section class="portfolio-section" id="education">
             <div class="container">
                 <h2 class="section-title">Education</h2>
                 <div class="projects-grid">
-                    
                     <article class="project-card">
                         <h3>Universitas Indonesia</h3>
-                        <p class="role">Undergraduate of Information Systems &middot; 2025 - Present</p>
-                        <p>Faculty of Computer Science. Active in various student organizations and academic projects.</p>
-                        <span class="tag">Higher Education</span>
+                        <p class="role" style="color: var(--pink-dark); font-weight: 600;">S1 Sistem Informasi &middot; 2025 - Present</p>
+                        <p>Fakultas Ilmu Komputer. Aktif dalam kegiatan organisasi dan proyek akademik.</p>
                     </article>
 
                     <article class="project-card">
-                        <h3>SMA Plus Shafiyyatul Amaliyyah Medan</h3>
-                        <p class="role">Natural Sciences Major &middot; 2022 - 2025</p>
-                        <p>Active in technology research team and international innovation competitions.</p>
-                        <span class="tag">High School</span>
+                        <h3>SMA Plus Shafiyyatul Amaliyyah</h3>
+                        <p class="role" style="color: var(--pink-dark); font-weight: 600;">MIPA &middot; 2022 - 2025</p>
+                        <p>Aktif dalam tim riset teknologi dan kompetisi inovasi.</p>
                     </article>
-
                 </div>
             </div>
         </section>
-
-</main>
+    </main>
 
     <footer class="site-footer">
         <div class="container">

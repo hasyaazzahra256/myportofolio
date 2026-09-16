@@ -33,7 +33,7 @@ class Project(models.Model):
     technology = models.CharField(max_length=100, blank=True, null=True)
     tech_stack = models.CharField(max_length=255, blank=True, null=True)
     project_url = models.URLField(blank=True, null=True)
-    project_image_url = models.URLField(blank=True, null=True)
+    thumbnail = models.URLField(blank=True, null=True) 
 
     def __str__(self):
         return self.title

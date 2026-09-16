@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
@@ -22,9 +23,22 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 def show_project(request):
+    # 1. serialisasi data Project dari database ke format JSON
+    data = serializers.serialize('json', Project.objects.all())
+    
+    # 2. deserialisasi balik dari string JSON ke daftar dictionary Python
+    projects_json = json.loads(data)
+    
+    # 3. ambil isi 'fields' dari tiap item dan sisipkan 'id' (pk) biar tombol delete di HTML tetap jalan
+    project_list = []
+    for item in projects_json:
+        project_data = item['fields']
+        project_data['id'] = item['pk']
+        project_list.append(project_data)
+
     context = {
         "name": "Hasya Azzahra Rangkuti",
-        "project_list": Project.objects.all(),
+        "project_list": project_list,
     }
     return render(request, "project.html", context)
 

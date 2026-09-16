@@ -4,10 +4,11 @@ from main.models import Project
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ["title", "description", "category", "project_url"]
+        fields = ["title", "description", "tech_stack", "project_url", "project_image_url"]
         widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Judul Proyek"}),
-            "description": forms.Textarea(attrs={"placeholder": "Deskripsi Proyek", "rows": 4}),
-            "category": forms.TextInput(attrs={"placeholder": "Kategori Proyek"}),
-            "project_url": forms.URLInput(attrs={"placeholder": "https://..."}),
+            "title": forms.TextInput(attrs={"placeholder": "Portfolio Website"}),
+            "description": forms.Textarea(attrs={"placeholder": "Ceritakan Proyekmu", "rows": 4}),
+            "tech_stack": forms.TextInput(attrs={"placeholder": "Django, Python, HTML, CSS"}),
+            "project_url": forms.URLInput(attrs={"placeholder": "https://github.com/..."}),
+            "project_image_url": forms.URLInput(attrs={"placeholder": "https://drive.google.com/..."}),
         }

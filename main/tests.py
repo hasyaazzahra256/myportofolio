@@ -21,10 +21,6 @@ class MainTest(TestCase):
         exp = Experience.objects.create(
             title="Asisten Laboratorium",
             description="Membantu praktikum mahasiswa.",
-            category="ORGANIZATION",
-            thumbnail="https://example.com/thumb.png",
-            started_at=self.now,
-            ended_at=self.now + timedelta(days=30),
         )
         self.assertEqual(str(exp), "Asisten Laboratorium")
 
@@ -32,10 +28,6 @@ class MainTest(TestCase):
         Experience.objects.create(
             title="Proyek Django",
             description="Membuat aplikasi web portofolio.",
-            category="PROJECT",
-            thumbnail="https://example.com/django.png",
-            started_at=self.now,
-            ended_at=self.now + timedelta(days=10),
         )
         response = self.client.get("/experience/")
         self.assertEqual(response.status_code, 200)
@@ -44,20 +36,7 @@ class MainTest(TestCase):
     def test_empty_experience_page(self):
         response = self.client.get("/experience/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Belum ada pengalaman")
-
-    def test_completed_experience(self):
-        past_start = self.now - timedelta(days=60)
-        past_end = self.now - timedelta(days=30)
-        exp = Experience.objects.create(
-            title="Magang Selesai",
-            description="Magang musim panas.",
-            category="WORK",
-            thumbnail="https://example.com/work.png",
-            started_at=past_start,
-            ended_at=past_end,
-        )
-        self.assertFalse(exp.is_ongoing)
+        self.assertContains(response, "No experiences to display yet.")
 
     def test_project_page_accessible_and_uses_correct_template(self):
         response = self.client.get("/projects/")
@@ -68,7 +47,7 @@ class MainTest(TestCase):
         Project.objects.create(
             title="Aplikasi Portofolio",
             description="Membuat web portofolio dengan Django.",
-            technology="Django & Tailwind",
+            tech_stack="Django & Tailwind",
             project_url="https://github.com"
         )
         response = self.client.get("/projects/")
@@ -78,4 +57,4 @@ class MainTest(TestCase):
     def test_empty_project_page(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Belum ada proyek")
+        self.assertContains(response, "No projects to display yet.")

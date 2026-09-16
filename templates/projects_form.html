@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Tambah Proyek Baru - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+<main class="container">
+    <section class="portfolio-section" style="max-width: 600px; margin: 2rem auto;">
+        <h1 class="section-title">Tambah Proyek Baru</h1>
+
+        <form method="POST" class="form-container">
+            {% csrf_token %}
+            
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 1rem;">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="btn" style="margin-top: 1.5rem; width: 100%;">Simpan Proyek</button>
+        </form>
+    </section>
+</main>
+{% endblock content %}

@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from main.models import Experience, Project  
+from main.forms import ProjectForm  # Impor ProjectForm yang baru dibuat
 
 def show_main(request):
     context = {
@@ -25,6 +26,19 @@ def show_project(request):
         "project_list": Project.objects.all(),
     }
     return render(request, "project.html", context)
+
+def create_project(request):
+    form = ProjectForm(request.POST or None)
+    
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("main:show_project")
+        
+    context = {
+        "name": "Hasya Azzahra Rangkuti",
+        "form": form
+    }
+    return render(request, "projects_form.html", context)
 
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():

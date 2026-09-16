@@ -22,10 +22,24 @@
     <main>
         <section class="portfolio-section">
             <div class="container">
-                <div class="section-header" style="text-align: center;">
-                    <p class="hero-kicker">✦ FEATURED PROJECTS ✦</p>
-                    <h1 class="section-title">My Projects</h1>
+                <!-- Header Section dengan Tombol Tambah Proyek -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+                    <div>
+                        <p class="hero-kicker" style="margin-bottom: 0.25rem;">✦ FEATURED PROJECTS ✦</p>
+                        <h1 class="section-title" style="margin: 0;">My Projects</h1>
+                    </div>
+                    <a href="{% url 'main:create_project' %}" style="background-color: #e53e3e; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                        + Tambah Proyek
+                    </a>
                 </div>
+
+                <!-- Form Filter / Search Bar -->
+                <form method="GET" action="{% url 'main:show_project' %}" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                    <input type="text" name="title" value="{{ title_query|default:'' }}" placeholder="Cari berdasarkan nama proyek" style="flex: 1; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; outline: none;">
+                    <button type="submit" style="background-color: #e53e3e; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">
+                        Cari
+                    </button>
+                </form>
 
                 <div class="projects-grid">
                     {% for project in project_list %}
@@ -48,7 +62,7 @@
 
                                 <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.5;">{{ project.description }}</p>
                                 
-                                <!-- Tombol link project URL (opsional jika ingin ditampilkan) -->
+                                <!-- Tombol link project URL (opsional) -->
                                 {% if project.project_url %}
                                     <div style="margin-top: 12px;">
                                         <a href="{{ project.project_url }}" target="_blank" rel="noopener noreferrer" style="color: #3182ce; text-decoration: none; font-size: 0.85rem; font-weight: bold;">

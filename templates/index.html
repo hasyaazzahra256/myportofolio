@@ -1,106 +1,83 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{% block meta %}
     <title>{{ name }} - Portfolio</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container">
-            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
-            <nav>
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_project' %}">Projects</a>
-            </nav>
-        </div>
-    </header>
+{% endblock meta %}
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero" id="profile">
-            <div class="container hero-grid">
-                <div class="hero-identity">
-                    <p class="hero-kicker">✦ {{ study_program }} ✦</p>
-                    <h1><span>Hasya Azzahra Rangkuti</span></h1> 
-                    <p class="hero-role">Information Systems Student at Universitas Indonesia</p>
-                    
-                    <div class="social-links">
-                        <a href="https://github.com/hasyaazzahra256" class="social-link" target="_blank">GitHub</a>
-                        <a href="https://linkedin.com/in/hasya-azzahra-rangkuti-ba1794378/" class="social-link" target="_blank">LinkedIn</a>
-                        <a href="mailto:hasyazahra25@gmail.com" class="social-link">Email</a>
-                    </div>
-                </div>
+{% block content %}
+<main>
+    <section class="hero" id="profile">
+        <div class="container hero-grid">
+            <div class="hero-identity">
+                <p class="hero-kicker">✦ {{ study_program }} ✦</p>
+                <h1><span>Hasya Azzahra Rangkuti</span></h1> 
+                <p class="hero-role">Information Systems Student at Universitas Indonesia</p>
                 
-                <div class="hero-photo">
-                    <div class="avatar-wrapper">
-                        <img class="avatar" src="{% static 'img/hasyaaa.png' %}" alt="Photo of {{ name }}">
-                    </div>
+                <div class="social-links">
+                    <a href="https://github.com/hasyaazzahra256" class="social-link" target="_blank">GitHub</a>
+                    <a href="https://linkedin.com/in/hasya-azzahra-rangkuti-ba1794378/" class="social-link" target="_blank">LinkedIn</a>
+                    <a href="mailto:hasyazahra25@gmail.com" class="social-link">Email</a>
                 </div>
             </div>
-        </section>
-
-        <!-- About Me / Introduction Box -->
-        <section class="container">
-            <div class="stamp-card">
-                <div class="stamp-ribbon">ABOUT ME</div>
-                <p class="bio">
-                    An Undergraduate Information Systems student at Universitas Indonesia passionate about technology, public speaking, and digital operations. Gold medalist at the Malaysia Technology Expo with hands-on experience in project management, public relations, and UI/UX design.
-                </p>
-            </div>
-        </section>
-
-        <!-- Skills & Interests -->
-        <section class="portfolio-section" id="skills">
-            <div class="container">
-                <h2 class="section-title">Skills & Highlights</h2>
-                <div class="pill-grid">
-                    <span class="pill-tag">Public Speaking & MC</span>
-                    <span class="pill-tag">UI/UX Design (Figma)</span>
-                    <span class="pill-tag">Project Management</span>
-                    <span class="pill-tag">Python & Java</span>
-                    <span class="pill-tag">Public Relations</span>
-                    <span class="pill-tag">Event Coordination</span>
+            
+            <div class="hero-photo">
+                <div class="avatar-wrapper">
+                    <img class="avatar" src="{% static 'img/hasyaaa.png' %}" alt="Photo of {{ name }}">
                 </div>
             </div>
-        </section>
-
-        <!-- Education -->
-        <section class="portfolio-section" id="education">
-            <div class="container">
-                <h2 class="section-title">Education</h2>
-                <div class="projects-grid">
-                    <article class="project-card">
-                        <h3>Universitas Indonesia</h3>
-                        <p style="color: var(--pink-dark); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">
-                            Undergraduate in Information Systems &middot; 2025 - Present
-                        </p>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">
-                            Active in various organizations including BEM Fasilkom UI, RISTEK Fasilkom UI, and Open House Fasilkom UI.
-                        </p>
-                    </article>
-
-                    <article class="project-card">
-                        <h3>SMA Plus Shafiyyatul Amaliyyah</h3>
-                        <p style="color: var(--pink-dark); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">
-                            Natural Sciences Major &middot; 2022 - 2025
-                        </p>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">
-                            Technology research team member and international innovation award winner.
-                        </p>
-                    </article>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
-    </footer>
-</body>
-</html>
+    </section>
+
+    <section class="container">
+        <div class="stamp-card">
+            <div class="stamp-ribbon">ABOUT ME</div>
+            <p class="bio">
+                An Undergraduate Information Systems student at Universitas Indonesia passionate about technology, public speaking, and digital operations. Gold medalist at the Malaysia Technology Expo with hands-on experience in project management, public relations, and UI/UX design.
+            </p>
+        </div>
+    </section>
+
+    <!-- Skills & Interests -->
+    <section class="portfolio-section" id="skills">
+        <div class="container">
+            <h2 class="section-title">Skills & Highlights</h2>
+            <div class="pill-grid">
+                <span class="pill-tag">Public Speaking & MC</span>
+                <span class="pill-tag">UI/UX Design (Figma)</span>
+                <span class="pill-tag">Project Management</span>
+                <span class="pill-tag">Python & Java</span>
+                <span class="pill-tag">Public Relations</span>
+                <span class="pill-tag">Event Coordination</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="portfolio-section" id="education">
+        <div class="container">
+            <h2 class="section-title">Education</h2>
+            <div class="projects-grid">
+                <article class="project-card">
+                    <h3>Universitas Indonesia</h3>
+                    <p style="color: var(--pink-dark); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                        Undergraduate in Information Systems &middot; 2025 - Present
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Active in various organizations including BEM Fasilkom UI, RISTEK Fasilkom UI, and Open House Fasilkom UI.
+                    </p>
+                </article>
+
+                <article class="project-card">
+                    <h3>SMA Plus Shafiyyatul Amaliyyah</h3>
+                    <p style="color: var(--pink-dark); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                        Natural Sciences Major &middot; 2022 - 2025
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Technology research team member and international innovation award winner.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

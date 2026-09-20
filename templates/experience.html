@@ -22,9 +22,15 @@
     <main>
         <section class="portfolio-section">
             <div class="container">
-                <div class="section-header" style="text-align: center;">
-                    <p class="hero-kicker">✦ ORGANIZATIONAL JOURNEY ✦</p>
-                    <h1 class="section-title">Experience</h1>
+                <!-- Header Section dengan Tombol Tambah Experience -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+                    <div>
+                        <p class="hero-kicker" style="color: #d66782; font-weight: bold; margin-bottom: 0.25rem;">✦ ORGANIZATIONAL JOURNEY ✦</p>
+                        <h1 class="section-title" style="margin: 0;">Experience</h1>
+                    </div>
+                    <a href="{% url 'main:create_experience' %}" style="background-color: #d66782; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                        + Add Experience
+                    </a>
                 </div>
                 
                 <div class="experience-grid">
@@ -39,11 +45,17 @@
                             <div class="card-body">
                                 <h2>{{ experience.title }}</h2>
                                 
+                                {% if experience.company %}
+                                    <p style="color: #d66782; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">
+                                        {{ experience.company }}
+                                    </p>
+                                {% endif %}
+
                                 <div class="experience-description">
                                     {{ experience.description|linebreaksbr }}
                                 </div>
 
-                                <p class="experience-date">
+                                <p class="experience-date" style="margin-top: 8px;">
                                     {% if experience.start_date %}
                                         {{ experience.start_date }}
                                     {% endif %}
@@ -51,8 +63,23 @@
                                         - Present
                                     {% elif experience.ended_at %}
                                         - {{ experience.ended_at }}
+                                    {% elif experience.end_date %}
+                                        - {{ experience.end_date }}
                                     {% endif %}
                                 </p>
+
+                                <!-- Tombol Edit dan Delete -->
+                                <div style="display: flex; gap: 0.5rem; margin-top: 15px;">
+                                    <a href="{% url 'main:edit_experience' experience.id %}" 
+                                       style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                       Edit
+                                    </a>
+                                    <a href="{% url 'main:delete_experience' experience.id %}" 
+                                       onclick="return confirm('Apakah kamu yakin ingin menghapus pengalaman ini?');" 
+                                       style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                       Delete
+                                    </a>
+                                </div>
                             </div>
                         </article>
                     {% empty %}

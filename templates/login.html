@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login - Portfolio</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login" style="max-width: 400px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+  <h2>Login</h2>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" style="padding: 8px 16px; margin-top: 10px; cursor: pointer;" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <p>Belum punya akun? <a href="{% url 'main:register' %}">Daftar di sini</a></p>
+</div>
+{% endblock content %}

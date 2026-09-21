@@ -2,7 +2,7 @@ from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, get_experiences_json,
     show_project, create_project, edit_project, delete_project, get_projects_json,
-    create_admin_pws, register
+    create_admin_pws, register, login_user
 )
 
 app_name = "main"
@@ -29,4 +29,6 @@ urlpatterns = [
 
     # register
     path('register/', register, name='register'),
+
+    path('login/', login_user, name='login'),
 ]

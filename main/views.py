@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from main.models import Experience, Project  
 from main.forms import ProjectForm, ExperienceForm 
@@ -148,7 +149,6 @@ def get_projects_json(request):
     projects_json = serializers.serialize("json", projects)
     return HttpResponse(projects_json, content_type="application/json")
 
-# --- LANGKAH 1: REGISTER VIEW ---
 def register(request):
     form = UserCreationForm()
 
@@ -157,7 +157,23 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Akun Anda berhasil dibuat!')
-            return redirect('main:login')  # atau 'main:show_main' jika belum buat login
+            return redirect('main:login')
 
     context = {'form': form}
     return render(request, 'register.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+        else:
+            messages.error(request, 'Username atau password salah!')
+    else:
+        form = AuthenticationForm(request)
+
+    context = {'form': form}
+    return render(request, 'login.html', context)

@@ -2,7 +2,7 @@ from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, get_experiences_json,
     show_project, create_project, edit_project, delete_project, get_projects_json,
-    create_admin_pws
+    create_admin_pws, register
 )
 
 app_name = "main"
@@ -26,4 +26,7 @@ urlpatterns = [
 
     # admin PWS Helper
     path("create-admin-pws/", create_admin_pws, name="create_admin_pws"),
+
+    # register
+    path('register/', register, name='register'),
 ]

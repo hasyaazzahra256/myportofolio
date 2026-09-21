@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from main.models import Experience, Project  
 from main.forms import ProjectForm, ExperienceForm 
 
@@ -16,13 +18,9 @@ def show_main(request):
     return render(request, "index.html", context)
 
 def show_experience(request):
-    # 1. serialisasi data Experience dari DB ke JSON
     data = serializers.serialize('json', Experience.objects.all())
-    
-    # 2. deserialisasi balik ke Python list/dict
     exp_json = json.loads(data)
     
-    # 3. ambil isi 'fields' dan sisipkan 'id' (pk)
     experience_list = []
     for item in exp_json:
         exp_data = item['fields']
@@ -75,21 +73,15 @@ def get_experiences_json(request):
     return HttpResponse(exp_json, content_type="application/json")
 
 def show_project(request):
-    # 1. tangkap parameter pencarian dari query string URL (?title=...)
     title_query = request.GET.get("title", "").strip()
     projects = Project.objects.all()
 
-    # 2. filter proyek berdasarkan judul jika ada kata kunci pencarian
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    # 3. serialisasi data Project dari database ke format JSON
     data = serializers.serialize('json', projects)
-    
-    # 4. deserialisasi dari string JSON ke daftar dictionary Python
     projects_json = json.loads(data)
     
-    # 5. ambil isi 'fields' dan sisipkan 'id' (pk)
     project_list = []
     for item in projects_json:
         project_data = item['fields']
@@ -155,3 +147,17 @@ def get_projects_json(request):
         
     projects_json = serializers.serialize("json", projects)
     return HttpResponse(projects_json, content_type="application/json")
+
+# --- LANGKAH 1: REGISTER VIEW ---
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Akun Anda berhasil dibuat!')
+            return redirect('main:login')  # atau 'main:show_main' jika belum buat login
+
+    context = {'form': form}
+    return render(request, 'register.html', context)

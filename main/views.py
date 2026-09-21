@@ -180,4 +180,5 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect("main:show_main")
+    messages.success(request, "Anda telah berhasil keluar!")
+    return redirect('main:login')

@@ -1,14 +1,18 @@
 from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, get_experiences_json,
-    show_project, create_project, edit_project, delete_project, get_projects_json,
-    create_admin_pws, register, login_user
+    show_project, create_project, edit_project, delete_project, get_projects_json, register, login_user, logout_user,
+    create_admin_pws
 )
 
 app_name = "main"
 
 urlpatterns = [
     path("", show_main, name="show_main"),
+    path('register/', register, name='register'),
+    path('login/', login_user, name='login'),
+    path("logout/", logout_user, name="logout"),
+
     
     # experience URLs
     path("experience/", show_experience, name="show_experience"),
@@ -27,7 +31,6 @@ urlpatterns = [
     # admin PWS Helper
     path("create-admin-pws/", create_admin_pws, name="create_admin_pws"),
 
-    # register
     path('register/', register, name='register'),
 
     path('login/', login_user, name='login'),

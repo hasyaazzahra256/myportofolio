@@ -72,6 +72,10 @@
                                         </a>
                                     </div>
                                 {% endif %}
+                                
+                                <div style="margin-top: 12px;">
+                                    {% include "components/project_star.html" with project=project %}
+                                </div>
 
                                 {% if user.is_superuser %}
                                 <div style="margin-top: 15px;">

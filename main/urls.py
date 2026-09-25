@@ -1,7 +1,7 @@
 from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, get_experiences_json,
-    show_project, create_project, edit_project, delete_project, get_projects_json, register, login_user, logout_user,
+    show_project, create_project, edit_project, delete_project, toggle_star, get_projects_json, register, login_user, logout_user,
     create_admin_pws
 )
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path("projects/add/", create_project, name="create_project"),
     path("projects/<uuid:id>/edit/", edit_project, name="edit_project"),
     path("projects/<uuid:id>/delete/", delete_project, name="delete_project"),
+    path("projects/<uuid:project_id>/star/", toggle_star, name="toggle_star"),
     path("api/projects/", get_projects_json, name="get_projects_json"),
 
     # admin PWS Helper

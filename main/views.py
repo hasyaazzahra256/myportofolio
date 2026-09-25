@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
@@ -103,6 +103,8 @@ def show_project(request):
 
 @login_required(login_url="/login/")
 def create_project(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
     form = ProjectForm(request.POST or None)
     
     if request.method == "POST" and form.is_valid():
@@ -132,6 +134,8 @@ def edit_project(request, id):
 
 @login_required(login_url="/login/")
 def delete_project(request, id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
     project = get_object_or_404(Project, pk=id)
     project.delete()
     return redirect("main:show_project")

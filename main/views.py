@@ -11,11 +11,13 @@ from main.models import Experience, Project
 from main.forms import ProjectForm, ExperienceForm 
 
 def show_main(request):
+    last_login = request.COOKIES.get('last_login', 'Belum ada sesi login / Cookie tidak ditemukan')
     context = {
         "name": "Hasya Azzahra Rangkuti",
         "npm": "2506617512",
         "study_program": "S1 Sistem Informasi",
         "bio": "Mahasiswa Sistem Informasi Fakultas Ilmu Komputer Universitas Indonesia.",
+        "last_login": last_login,
     }
     return render(request, "index.html", context)
 

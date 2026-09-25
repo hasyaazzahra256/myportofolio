@@ -28,9 +28,12 @@
                         <p class="hero-kicker" style="margin-bottom: 0.25rem;">✦ FEATURED PROJECTS ✦</p>
                         <h1 class="section-title" style="margin: 0;">My Projects</h1>
                     </div>
+                    
+                    {% if user.is_superuser %}
                     <a href="{% url 'main:create_project' %}" style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
                         + Tambah Proyek
                     </a>
+                    {% endif %}
                 </div>
 
                 <!-- Form Filter / Search Bar -->
@@ -62,7 +65,6 @@
 
                                 <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.5;">{{ project.description }}</p>
                                 
-                                <!-- Tombol link project URL (opsional) -->
                                 {% if project.project_url %}
                                     <div style="margin-top: 12px;">
                                         <a href="{{ project.project_url }}" target="_blank" rel="noopener noreferrer" style="color: #3182ce; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
@@ -71,6 +73,7 @@
                                     </div>
                                 {% endif %}
 
+                                {% if user.is_superuser %}
                                 <div style="margin-top: 15px;">
                                     <a href="{% url 'main:delete_project' project.id %}" 
                                        onclick="return confirm('Apakah kamu yakin ingin menghapus proyek ini?');" 
@@ -78,6 +81,7 @@
                                        Hapus Proyek
                                     </a>
                                 </div>
+                                {% endif %}
                             </div>
                         </article>
                     {% empty %}

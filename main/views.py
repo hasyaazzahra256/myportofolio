@@ -185,4 +185,6 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     messages.success(request, "Anda telah berhasil keluar!")
-    return redirect('main:login')
+    response = redirect('main:login')
+    response.delete_cookie('last_login')
+    return response

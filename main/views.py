@@ -1,4 +1,5 @@
 import json
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
@@ -165,11 +166,12 @@ def register(request):
 def login_user(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
-
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('main:show_main')
+            response = redirect('main:show_main')
+            response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            return response
         else:
             messages.error(request, 'Username atau password salah!')
     else:

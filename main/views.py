@@ -167,7 +167,7 @@ def get_projects_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
         
-    projects_json = serializers.serialize("json", projects)
+    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)
     return HttpResponse(projects_json, content_type="application/json")
 
 def register(request):

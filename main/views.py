@@ -6,6 +6,8 @@ from django.core import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from main.models import Experience, Project  
 from main.forms import ProjectForm, ExperienceForm 
@@ -99,6 +101,7 @@ def show_project(request):
     }
     return render(request, "project.html", context)
 
+@login_required(login_url="/login/")
 def create_project(request):
     form = ProjectForm(request.POST or None)
     
@@ -127,6 +130,7 @@ def edit_project(request, id):
     }
     return render(request, "projects_form.html", context)
 
+@login_required(login_url="/login/")
 def delete_project(request, id):
     project = get_object_or_404(Project, pk=id)
     project.delete()

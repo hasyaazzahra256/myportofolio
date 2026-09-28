@@ -14,7 +14,9 @@ from main.models import Experience, Project
 from main.forms import ProjectForm, ExperienceForm 
 
 def is_editor(user):
-    return user.is_authenticated and user.groups.filter(name='Editor').exists()
+    if not user or not user.is_authenticated:
+        return False
+    return user.groups.filter(name='Editor').exists()
 
 def show_main(request):
     last_login = request.COOKIES.get('last_login', 'Belum ada sesi login / Cookie tidak ditemukan')
@@ -65,18 +67,10 @@ def logout_user(request):
     return response
 
 def show_experience(request):
-    data = serializers.serialize('json', Experience.objects.all())
-    exp_json = json.loads(data)
-    
-    experience_list = []
-    for item in exp_json:
-        exp_data = item['fields']
-        exp_data['id'] = item['pk']
-        experience_list.append(exp_data)
-
+    experiences = Experience.objects.all()
     context = {
         "name": "Hasya Azzahra Rangkuti",
-        "experience_list": experience_list,
+        "experience_list": experiences,
         "is_editor": is_editor(request.user),
     }
     return render(request, "experience.html", context)
@@ -129,7 +123,6 @@ def delete_experience(request, id):
 
 def get_experiences_json(request):
     experiences = Experience.objects.all()
-    # Hanya mengambil field publik dari model Experience
     exp_json = serializers.serialize(
         "json", 
         experiences, 
@@ -144,18 +137,9 @@ def show_project(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    data = serializers.serialize('json', projects)
-    projects_json = json.loads(data)
-    
-    project_list = []
-    for item in projects_json:
-        project_data = item['fields']
-        project_data['id'] = item['pk']
-        project_list.append(project_data)
-
     context = {
         "name": "Hasya Azzahra Rangkuti",
-        "project_list": project_list,
+        "project_list": projects,
         "title_query": title_query,
         "is_editor": is_editor(request.user),
     }

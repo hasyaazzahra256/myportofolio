@@ -13,11 +13,10 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path("logout/", logout_user, name="logout"),
 
-    
     # experience URLs
     path("experience/", show_experience, name="show_experience"),
     path("experience/add/", create_experience, name="create_experience"),
-    path("experience/<uuid:id>/edit/", edit_experience, name="edit_experience"), # Gunakan <int:id> jika primary key bertipe integer
+    path("experience/<uuid:id>/edit/", edit_experience, name="edit_experience"),
     path("experience/<uuid:id>/delete/", delete_experience, name="delete_experience"),
     path("api/experiences/", get_experiences_json, name="get_experiences_json"),
 
@@ -31,8 +30,4 @@ urlpatterns = [
 
     # admin PWS Helper
     path("create-admin-pws/", create_admin_pws, name="create_admin_pws"),
-
-    path('register/', register, name='register'),
-
-    path('login/', login_user, name='login'),
 ]

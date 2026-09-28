@@ -129,7 +129,12 @@ def delete_experience(request, id):
 
 def get_experiences_json(request):
     experiences = Experience.objects.all()
-    exp_json = serializers.serialize("json", experiences)
+    # Hanya mengambil field publik dari model Experience
+    exp_json = serializers.serialize(
+        "json", 
+        experiences, 
+        fields=('title', 'company', 'description', 'start_date', 'end_date', 'ended_at', 'is_ongoing', 'thumbnail')
+    )
     return HttpResponse(exp_json, content_type="application/json")
 
 def show_project(request):
@@ -223,7 +228,11 @@ def get_projects_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
         
-    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)
+    projects_json = serializers.serialize(
+        "json", 
+        projects, 
+        fields=('title', 'description', 'tech_stack', 'project_url', 'thumbnail')
+    )
     return HttpResponse(projects_json, content_type="application/json")
 
 def create_admin_pws(request):

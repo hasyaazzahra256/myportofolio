@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not PRODUCTION
+DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mfey+rhz=kek++90hyk5_39d)&%z)gp&siq+pu6nzn0*h94s*2'
 
-ALLOWED_HOSTS = ["*"]  
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "hasya-azzahra-myportofolio.pws.cs.ui.ac.id", "*.pws.cs.ui.ac.id", "*"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://hasya-azzahra-myportofolio.pws.cs.ui.ac.id",

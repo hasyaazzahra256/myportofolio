@@ -92,3 +92,47 @@ Meski AI sangat membantu mempercepat penulisan logika views dan form, tetap ada 
 3. **Integritas Deserialisasi Data pada Views**:
    * Masalah: Saat deserialisasi JSON dilakukan di fungsi `show_experience`, field `id` tidak otomatis terbawa ke dalam *dictionary* yang di-pass ke template, sehingga link tombol `edit` dan `delete` sempat kehilangan referensi ID objek.
    * Perbaikan: Saya memperbaiki logika perulangan di `views.py` secara manual dengan menyisipkan atribut `exp_data['id'] = item['pk']` sebelum dikirimkan ke dalam context `experience.html`.
+
+
+### Tugas 4
+
+1. **Bagaimana implementasi *Role-Based Access Control* (RBAC) pada proyek ini?**  
+   Implementasi RBAC dilakukan dengan memanfaatkan fitur bawaan Django `Group` dan atribut `is_superuser` pada model `User`:
+   - **User Biasa (Visitor/Non-Editor)**: Hanya memiliki akses *read-only*. Mereka hanya bisa melihat daftar Experience dan Projects, serta melakukan aksi *starring* (toggle star) pada proyek.
+   - **Editor (Grup 'Editor')**: Diberikan hak akses untuk membuat (`create`), mengubah (`edit`), dan menghapus (`delete`) data Experience maupun Projects.
+   - **Superuser (Admin)**: Memiliki hak akses penuh (*full access*) terhadap seluruh sistem, baik melalui Django Admin maupun antarmuka aplikasi utama.
+
+2. **Bagaimana cara memastikan hak akses keamanan tetap terjaga di level backend dan frontend?**  
+   - **Level Backend (Views & Endpoint)**: Mengecek peran pengguna di setiap view yang melakukan manipulasi data (`create`, `edit`, `delete`) menggunakan fungsi penolong `is_editor(user)` dan `request.user.is_superuser`. Jika pengguna yang belum terautentikasi atau bukan anggota grup Editor/Superuser mencoba mengakses URL secara langsung, sistem akan memicu `PermissionDenied` (HTTP 403) atau mengarahkannya ke halaman login (`@login_required`).
+   - **Level Frontend (Templates)**: Menggunakan logika pengkondisian Django Template (`{% if user.is_superuser or is_editor %}`) untuk menyembunyikan tombol-tombol sensitif seperti **+ Add**, **Edit**, dan **Delete**. Dengan begitu, pengguna biasa tidak akan melihat elemen antarmuka yang tidak menjadi hak aksesnya.
+
+3. **Bagaimana cara menjaga keamanan data pada endpoint JSON dari kebocoran informasi sensitif?**  
+   Pada fungsi `get_experiences_json` dan `get_projects_json` di `views.py`, pembatasan dilakukan secara eksplisit menggunakan parameter `fields` saat meng-serialize data ke JSON (misalnya `fields=('title', 'description', 'tech_stack', 'project_url', 'thumbnail')`). Dengan cara ini, relasi ke model `User` atau metadata internal yang berpotensi membocorkan data sensitif pengguna (seperti *password hash*, email rahasia, atau tanggal login) tidak ikut terekspos ke publik melalui endpoint JSON API.
+
+
+### Dokumentasi & AI Disclosure (Tugas 4)
+Proyek pada Tugas 4 ini dikembangkan dengan memanfaatkan AI (Gemini) sebagai pair-programmer, membantu memandu langkah-langkah konfigurasi grup Django Admin, merancang fungsi penolong RBAC, serta melakukan pembatasan serialization data.
+
+### Tools & Log Prompting
+- **Tool Utama**: Gemini 2.5 Flash / Pro.
+- **Log Prompting Ringkas**:
+  1. *"Bagaimana cara membuat fungsi helper di views.py untuk mengecek apakah user terdaftar dalam grup 'Editor' di Django?"*
+  2. *"Bantu sesuaikan views.py dan urls.py untuk membatasi akses create, edit, dan delete experience serta project hanya untuk Superuser dan grup Editor."*
+  3. *"Bagaimana cara menyembunyikan tombol Add, Edit, dan Delete di template HTML jika user bukan Superuser atau Editor?"*
+  4. *"Bagaimana cara membatasi field yang di-serialize ke JSON pada Django serializers agar tidak membocorkan data User?"*
+
+### Keterbatasan AI dan perbaikan manual yang saya lakukan
+
+Meski AI sangat membantu dalam mempercepat penyusunan logika pengkondisian dan keamanan, tetap ada beberapa hal yang harus saya perbaiki dan sesuaikan sendiri secara manual:
+
+1. **Penyesuaian Struktur Relasi Model pada `toggle_star`**:
+   - **Masalah**: AI sempat menyarankan penggunaan relasi `starred_by` pada model `Project`, padahal nama atribut ManyToMany yang saya definisikan di model adalah `stars`.
+   - **Perbaikan**: Saya memperbaikinya secara manual di fungsi `toggle_star` di `views.py` dengan menggunakan `project.stars.filter(...)` dan `project.stars.add/remove(...)` agar sesuai dengan skema model yang ada.
+
+2. **Kesesuaian Jalur Tempat Berkas Template (Directory Structure)**:
+   - **Masalah**: Saat AI memberikan contoh perintah Git untuk menyimpannya, AI mengasumsikan folder template berada di `main/templates/`, sementara pada proyek saya berkas template diletakkan di root folder `templates/`.
+   - **Perbaikan**: Saya menyesuaikan lokasi path berkas secara manual saat menjalankan perintah `git add templates/` di terminal.
+
+3. **Pembersihan Routing dan URL Duplikat**:
+   - **Masalah**: Pada berkas `urls.py`, terdapat beberapa deklarasi path yang berulang (duplikat path `login/` dan `register/`).
+   - **Perbaikan**: Saya merapikan isi `urls.py` secara manual dengan menghapus baris duplikat agar pemanggilan *named URL* berjalan bersih dan tanpa potensi bentrok routing.

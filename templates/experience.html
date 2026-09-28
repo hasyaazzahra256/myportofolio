@@ -1,101 +1,86 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experience - {{ name }}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container">
-            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
-            <nav>
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_project' %}">Projects</a>
-            </nav>
-        </div>
-    </header>
 
-    <main>
-        <section class="portfolio-section">
-            <div class="container">
-                <!-- Header Section dengan Tombol Tambah Experience -->
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
-                    <div>
-                        <p class="hero-kicker" style="color: #d66782; font-weight: bold; margin-bottom: 0.25rem;">✦ ORGANIZATIONAL JOURNEY ✦</p>
-                        <h1 class="section-title" style="margin: 0;">Experience</h1>
-                    </div>
-                    <a href="{% url 'main:create_experience' %}" style="background-color: #d66782; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
-                        + Add Experience
-                    </a>
+{% block meta %}
+    <title>Experience - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+<main>
+    <section class="portfolio-section">
+        <div class="container">
+            <!-- Header Section dengan Tombol Tambah Experience -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+                <div>
+                    <p class="hero-kicker" style="color: #d66782; font-weight: bold; margin-bottom: 0.25rem;">✦ ORGANIZATIONAL JOURNEY ✦</p>
+                    <h1 class="section-title" style="margin: 0;">Experience</h1>
                 </div>
                 
-                <div class="experience-grid">
-                    {% for experience in experience_list %}
-                        <article class="experience-card">
-                            {% if experience.thumbnail %}
-                                <div class="card-image-wrapper">
-                                    <img src="{{ experience.thumbnail }}" alt="{{ experience.title }}" class="card-thumbnail">
-                                </div>
+                {% if user.is_superuser or is_editor %}
+                <a href="{% url 'main:create_experience' %}" style="background-color: #d66782; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                    + Add Experience
+                </a>
+                {% endif %}
+            </div>
+            
+            <div class="experience-grid">
+                {% for experience in experience_list %}
+                    <article class="experience-card">
+                        {% if experience.thumbnail %}
+                            <div class="card-image-wrapper">
+                                <img src="{{ experience.thumbnail }}" alt="{{ experience.title }}" class="card-thumbnail">
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h2>{{ experience.title }}</h2>
+                            
+                            {% if experience.company %}
+                                <p style="color: #d66782; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">
+                                    {{ experience.company }}
+                                </p>
                             {% endif %}
 
-                            <div class="card-body">
-                                <h2>{{ experience.title }}</h2>
-                                
-                                {% if experience.company %}
-                                    <p style="color: #d66782; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">
-                                        {{ experience.company }}
-                                    </p>
-                                {% endif %}
-
-                                <div class="experience-description">
-                                    {{ experience.description|linebreaksbr }}
-                                </div>
-
-                                <p class="experience-date" style="margin-top: 8px;">
-                                    {% if experience.start_date %}
-                                        {{ experience.start_date }}
-                                    {% endif %}
-                                    {% if experience.is_ongoing %}
-                                        - Present
-                                    {% elif experience.ended_at %}
-                                        - {{ experience.ended_at }}
-                                    {% elif experience.end_date %}
-                                        - {{ experience.end_date }}
-                                    {% endif %}
-                                </p>
-
-                                <!-- Tombol Edit dan Delete -->
-                                <div style="display: flex; gap: 0.5rem; margin-top: 15px;">
-                                    <a href="{% url 'main:edit_experience' experience.id %}" 
-                                       style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                       Edit
-                                    </a>
-                                    <a href="{% url 'main:delete_experience' experience.id %}" 
-                                       onclick="return confirm('Apakah kamu yakin ingin menghapus pengalaman ini?');" 
-                                       style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                       Delete
-                                    </a>
-                                </div>
+                            <div class="experience-description">
+                                {{ experience.description|linebreaksbr }}
                             </div>
-                        </article>
-                    {% empty %}
-                        <div class="empty-state">
-                            <p>No experiences to display yet.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+                            <p class="experience-date" style="margin-top: 8px;">
+                                {% if experience.start_date %}
+                                    {{ experience.start_date }}
+                                {% endif %}
+                                {% if experience.is_ongoing %}
+                                    - Present
+                                {% elif experience.ended_at %}
+                                    - {{ experience.ended_at }}
+                                {% elif experience.end_date %}
+                                    - {{ experience.end_date }}
+                                {% endif %}
+                            </p>
+
+                            <!-- Hanya tampilkan tombol Edit dan Delete jika user adalah Superuser atau Editor -->
+                            {% if user.is_superuser or is_editor %}
+                            <div style="display: flex; gap: 0.5rem; margin-top: 15px;">
+                                <a href="{% url 'main:edit_experience' experience.id %}" 
+                                   style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                   Edit
+                                </a>
+                                <a href="{% url 'main:delete_experience' experience.id %}" 
+                                   onclick="return confirm('Apakah kamu yakin ingin menghapus pengalaman ini?');" 
+                                   style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                   Delete
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-state">
+                        <p>No experiences to display yet.</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </footer>
-</body>
-</html>
+    </section>
+</main>
+{% endblock content %}

@@ -24,12 +24,72 @@
                     </button>
 
                     {% if user.is_superuser or is_editor %}
-                    <a href="{% url 'main:create_project' %}" style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
-                        + Tambah Proyek
-                    </a>
+                    <button type="button"
+                            class="button project-add-button"
+                            popovertarget="add-project-modal"
+                            style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 4px; font-weight: bold; font-size: 0.9rem; cursor: pointer;">
+                        <span aria-hidden="true">+</span>
+                        Tambah Proyek
+                    </button>
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Modal Popover Tambah Project -->
+            {% if user.is_superuser or is_editor %}
+            <div id="add-project-modal" popover class="modal-popover" style="padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; max-width: 500px; width: 90%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: 1.25rem; color: #2d3748;">Tambah Project Baru</h2>
+                    <button type="button" 
+                            popovertarget="add-project-modal" 
+                            popovertargetaction="hide" 
+                            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096;">&times;</button>
+                </div>
+
+                <form id="add-project-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label for="id_title" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Judul Project *</label>
+                        <input type="text" id="id_title" name="title" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="id_description" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Deskripsi *</label>
+                        <textarea id="id_description" name="description" rows="3" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="id_tech_stack" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Tech Stack (Pisahkan dengan koma)</label>
+                        <input type="text" id="id_tech_stack" name="tech_stack" placeholder="Django, Tailwind, PostgreSQL" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="id_project_url" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">URL Project</label>
+                        <input type="url" id="id_project_url" name="project_url" placeholder="https://example.com" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="id_project_image_url" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">URL Gambar Proyek</label>
+                        <input type="url" id="id_project_image_url" name="project_image_url" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+                        <button type="button" 
+                                popovertarget="add-project-modal" 
+                                popovertargetaction="hide" 
+                                style="background-color: #e2e8f0; color: #4a5568; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                id="submit-project-btn" 
+                                style="background-color: #D86B88; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Simpan Project
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
 
             <!-- Form Pencarian AJAX -->
             <form id="project-search-form" class="project-search">
@@ -70,6 +130,7 @@
 <script>
     // Konfigurasi Endpoint & Superuser Status
     const BASE_PROJECTS_ENDPOINT = "{% url 'main:get_projects_json' %}";
+    const CREATE_PROJECT_ENDPOINT = "{% url 'main:create_project_ajax' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
     
     // Mengambil nilai CSRF Token secara aman dari cookie Django
@@ -98,6 +159,8 @@
     const gridContainer = document.getElementById('grid');
     const searchForm = document.getElementById('project-search-form');
     const searchInput = document.getElementById('search-input');
+    const addProjectForm = document.getElementById('add-project-form');
+    const addProjectModal = document.getElementById('add-project-modal');
 
     // Pengaturan Timer Debounce Pencarian
     const SEARCH_DEBOUNCE_DELAY = 300;
@@ -249,6 +312,58 @@
         clearTimeout(searchDebounceTimer);
         searchProjects();
     });
+
+    // Menangani penambahan project baru via AJAX
+    if (addProjectForm) {
+        addProjectForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(addProjectForm);
+            const submitBtn = document.getElementById('submit-project-btn');
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Menyimpan...';
+
+                const response = await fetch(CREATE_PROJECT_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Gagal menyimpan project');
+                }
+
+                // Reset Form & Tutup Popover Modal
+                addProjectForm.reset();
+                if (addProjectModal.hidePopover) {
+                    addProjectModal.hidePopover();
+                }
+
+                // Tampilkan Toast Notifikasi (jika fungsi showToast tersedia)
+                if (typeof showToast === 'function') {
+                    showToast('Berhasil!', 'Project baru berhasil ditambahkan.', 'success');
+                }
+
+                // Refresh data grid secara otomatis
+                fetchProjects(searchInput.value.trim());
+
+            } catch (error) {
+                console.error('Error adding project:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Gagal!', 'Terjadi kesalahan saat menyimpan project.', 'error');
+                } else {
+                    alert('Gagal menyimpan project. Silakan coba lagi.');
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Project';
+            }
+        });
+    }
 
     // Inisialisasi awal saat halaman dimuat
     fetchProjects(searchInput.value.trim());

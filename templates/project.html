@@ -17,14 +17,12 @@
                 </div>
                 
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <!-- Tombol Pengujian Toast Notification -->
                     <button type="button" 
                             onclick="showToast('Notifikasi Sistem', 'Project berhasil dimuat dengan baik!', 'success')" 
                             style="background-color: #f7fafc; color: #D86B88; border: 1px solid #D86B88; padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.9rem; cursor: pointer;">
                         ✦ Test Toast
                     </button>
 
-                    <!-- Hanya tampilkan tombol Tambah jika user adalah Superuser atau Editor -->
                     {% if user.is_superuser or is_editor %}
                     <a href="{% url 'main:create_project' %}" style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
                         + Tambah Proyek
@@ -33,68 +31,37 @@
                 </div>
             </div>
 
-            <!-- Form Filter / Search Bar -->
-            <form method="GET" action="{% url 'main:show_project' %}" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-                <input type="text" name="title" value="{{ title_query|default:'' }}" placeholder="Cari berdasarkan nama proyek" style="flex: 1; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; outline: none;">
+            <!-- Form Pencarian AJAX (tanpa method dan action) -->
+            <form id="project-search-form" class="project-search">
+                <input type="search"
+                       id="search-input"
+                       name="title"
+                       value="{{ title_query|default:'' }}"
+                       placeholder="Cari berdasarkan nama proyek"
+                       class="project-search__input"
+                       aria-label="Cari berdasarkan nama proyek">
                 <button type="submit" style="background-color: #D86B88; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">
                     Cari
                 </button>
             </form>
 
-            <div class="projects-grid">
-                {% for project in project_list %}
-                    <article class="project-card">
-                        {% if project.thumbnail %}
-                            <div style="border: 1px solid #1a1a1a; padding: 6px; background-color: #fff; margin-bottom: 16px;">
-                                <img src="{{ project.thumbnail }}" alt="{{ project.title }}" style="width: 100%; height: 200px; object-fit: cover; display: block;">
-                            </div>
-                        {% endif %}
-
-                        <div class="card-body">
-                            <h2>{{ project.title }}</h2>
-
-                            {% if project.tech_stack %}
-                                <p style="color: #D86B88; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
-                                    {{ project.tech_stack }}
-                                </p>
-                            {% endif %}
-
-                            <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.5;">{{ project.description }}</p>
-                            
-                            {% if project.project_url %}
-                                <div style="margin-top: 12px;">
-                                    <a href="{{ project.project_url }}" target="_blank" rel="noopener noreferrer" style="color: #3182ce; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                        View Project &rarr;
-                                    </a>
-                                </div>
-                            {% endif %}
-                            
-                            <div style="margin-top: 12px;">
-                                {% include "components/project_star.html" with project=project %}
-                            </div>
-
-                            <!-- Hanya tampilkan tombol Edit dan Delete jika user adalah Superuser atau Editor -->
-                            {% if user.is_superuser or is_editor %}
-                            <div style="display: flex; gap: 0.5rem; margin-top: 15px;">
-                                <a href="{% url 'main:edit_project' project.id %}" 
-                                   style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                   Edit
-                                </a>
-                                <a href="{% url 'main:delete_project' project.id %}" 
-                                   onclick="return confirm('Apakah kamu yakin ingin menghapus proyek ini?');" 
-                                   style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                   Hapus
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </article>
-                {% empty %}
-                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: #718096;">
-                        <p style="font-size: 1rem; margin: 0;">No projects to display yet.</p>
-                    </div>
-                {% endfor %}
+            <!-- Loading State -->
+            <div id="loading" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>Memuat projects...</p>
             </div>
+
+            <!-- Error State -->
+            <div id="error" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>Gagal memuat data projects. Silakan coba lagi.</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>Belum ada proyek yang ditambahkan atau ditemukan.</p>
+            </div>
+
+            <!-- Project Grid Container (Wadah Kosong untuk AJAX) -->
+            <div id="grid" class="projects-grid hide"></div>
         </div>
     </section>
 </main>

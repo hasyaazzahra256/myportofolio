@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <!-- Form Pencarian AJAX (tanpa method dan action) -->
+            <!-- Form Pencarian AJAX -->
             <form id="project-search-form" class="project-search">
                 <input type="search"
                        id="search-input"
@@ -60,13 +60,14 @@
                 <p>Belum ada proyek yang ditambahkan atau ditemukan.</p>
             </div>
 
-            <!-- Project Grid Container (Wadah Kosong untuk AJAX) -->
+            <!-- Project Grid Container -->
             <div id="grid" class="projects-grid hide"></div>
         </div>
     </section>
 </main>
+
 <!-- Script AJAX Fetch API -->
-    <script>
+<script>
     // Konfigurasi Endpoint & Superuser Status
     const BASE_PROJECTS_ENDPOINT = "{% url 'main:get_projects_json' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
@@ -97,6 +98,10 @@
     const gridContainer = document.getElementById('grid');
     const searchForm = document.getElementById('project-search-form');
     const searchInput = document.getElementById('search-input');
+
+    // Pengaturan Timer Debounce Pencarian
+    const SEARCH_DEBOUNCE_DELAY = 300;
+    let searchDebounceTimer;
 
     // Menampilkan/menyembunyikan bagian halaman menggunakan kelas .hide
     function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
@@ -225,13 +230,27 @@
         }
     }
 
-    // Event Handler untuk Form Search
-    searchForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // Mencegah reload halaman
-        fetchProjects(searchInput.value.trim()); // Jalankan pencarian via AJAX
+    // Fungsi pembantu pencarian
+    function searchProjects() {
+        fetchProjects(searchInput.value.trim());
+    }
+
+    // Debouncing saat mengetik di input pencarian
+    searchInput.addEventListener("input", function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+            searchProjects();
+        }, SEARCH_DEBOUNCE_DELAY);
+    });
+
+    // Menangani submit via tombol Cari atau Enter
+    searchForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        searchProjects();
     });
 
     // Inisialisasi awal saat halaman dimuat
     fetchProjects(searchInput.value.trim());
-    </script>
+</script>
 {% endblock content %}

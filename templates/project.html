@@ -9,19 +9,28 @@
 <main>
     <section class="portfolio-section">
         <div class="container">
-            <!-- Header Section dengan Tombol Tambah Proyek -->
+            <!-- Header Section dengan Tombol Tambah Proyek & Test Toast -->
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
                 <div>
                     <p class="hero-kicker" style="margin-bottom: 0.25rem;">✦ FEATURED PROJECTS ✦</p>
                     <h1 class="section-title" style="margin: 0;">My Projects</h1>
                 </div>
                 
-                <!-- Hanya tampilkan tombol Tambah jika user adalah Superuser atau Editor -->
-                {% if user.is_superuser or is_editor %}
-                <a href="{% url 'main:create_project' %}" style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
-                    + Tambah Proyek
-                </a>
-                {% endif %}
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <!-- Tombol Pengujian Toast Notification -->
+                    <button type="button" 
+                            onclick="showToast('Notifikasi Sistem', 'Project berhasil dimuat dengan baik!', 'success')" 
+                            style="background-color: #f7fafc; color: #D86B88; border: 1px solid #D86B88; padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.9rem; cursor: pointer;">
+                        ✦ Test Toast
+                    </button>
+
+                    <!-- Hanya tampilkan tombol Tambah jika user adalah Superuser atau Editor -->
+                    {% if user.is_superuser or is_editor %}
+                    <a href="{% url 'main:create_project' %}" style="background-color: #D86B88; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                        + Tambah Proyek
+                    </a>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Form Filter / Search Bar -->
@@ -81,8 +90,8 @@
                         </div>
                     </article>
                 {% empty %}
-                    <div class="empty-state">
-                        <p>No projects to display yet.</p>
+                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: #718096;">
+                        <p style="font-size: 1rem; margin: 0;">No projects to display yet.</p>
                     </div>
                 {% endfor %}
             </div>

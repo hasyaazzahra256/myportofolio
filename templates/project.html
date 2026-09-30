@@ -70,8 +70,8 @@
                     </div>
 
                     <div>
-                        <label for="id_project_image_url" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">URL Gambar Proyek</label>
-                        <input type="url" id="id_project_image_url" name="project_image_url" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                        <label for="id_thumbnail" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">URL Gambar Proyek</label>
+                        <input type="url" id="id_thumbnail" name="thumbnail" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
@@ -128,10 +128,10 @@
 
 <!-- Script AJAX Fetch API -->
 <script>
-    // Konfigurasi Endpoint & Superuser Status
+    // Konfigurasi Endpoint & Status Hak Akses
     const BASE_PROJECTS_ENDPOINT = "{% url 'main:get_projects_json' %}";
     const CREATE_PROJECT_ENDPOINT = "{% url 'main:create_project_ajax' %}";
-    const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+    const IS_CAN_DELETE = ("{{ user.is_superuser|yesno:'true,false' }}" === "true") || ("{{ is_editor|yesno:'true,false' }}" === "true");
     
     // Mengambil nilai CSRF Token secara aman dari cookie Django
     function getCookie(name) {
@@ -195,7 +195,7 @@
         const safeDescription = escapeHTML(project.description);
         const safeTechStack = escapeHTML(project.tech_stack);
         const safeProjectUrl = escapeHTML(project.project_url);
-        const safeImageUrl = escapeHTML(project.project_image_url || project.thumbnail || '');
+        const safeImageUrl = escapeHTML(project.thumbnail || '');
         const safeStarredByNames = escapeHTML(project.starred_by_names);
 
         const articleElement = document.createElement('article');
@@ -230,7 +230,7 @@
 
         const csrfInputHtml = `<input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">`;
 
-        const deleteHtml = IS_SUPERUSER 
+        const deleteHtml = IS_CAN_DELETE 
             ? `<form method="post" action="${deleteUrl}" style="display:inline;">
                 ${csrfInputHtml}
                 <button type="submit" 
@@ -266,7 +266,7 @@
                     </form>
                 </div>
 
-                ${IS_SUPERUSER ? `<div style="display: flex; gap: 0.5rem; margin-top: 15px;">${deleteHtml}</div>` : ''}
+                ${IS_CAN_DELETE ? `<div style="display: flex; gap: 0.5rem; margin-top: 15px;">${deleteHtml}</div>` : ''}
             </div>
         `;
 
@@ -352,7 +352,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Gagal menyimpan project');
+                    const errRes = await response.json().catch(() => ({}));
+                    throw new Error(errRes.message || 'Gagal menyimpan project');
                 }
 
                 // Reset Form & Tutup Popover Modal
@@ -372,9 +373,9 @@
             } catch (error) {
                 console.error('Error adding project:', error);
                 if (typeof showToast === 'function') {
-                    showToast('Gagal!', 'Terjadi kesalahan saat menyimpan project.', 'error');
+                    showToast('Gagal!', error.message || 'Terjadi kesalahan saat menyimpan project.', 'error');
                 } else {
-                    alert('Gagal menyimpan project. Silakan coba lagi.');
+                    alert(error.message || 'Gagal menyimpan project. Silakan coba lagi.');
                 }
             } finally {
                 submitBtn.disabled = false;

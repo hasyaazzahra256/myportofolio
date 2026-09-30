@@ -130,12 +130,13 @@ def get_experiences_json(request):
     )
     return HttpResponse(exp_json, content_type="application/json")
 
-def show_projects(request):
+def show_project(request):
     title_query = request.GET.get("title", "").strip()
     context = {
         "name": "Hasya Azzahra Rangkuti",
         "title_query": title_query,
         "form": ProjectForm(),
+        "is_editor": is_editor(request.user),
     }
     return render(request, "project.html", context)
 
@@ -201,9 +202,9 @@ def toggle_star(request, project_id):
 
 @require_POST
 def create_project_ajax(request):
-    if not request.user.is_superuser:
+    if not (request.user.is_superuser or is_editor(request.user)):
         return JsonResponse(
-            {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
+            {"message": "Hanya pemilik portofolio atau editor yang dapat menambahkan proyek."},
             status=403,
         )
     
@@ -219,14 +220,14 @@ def create_project_ajax(request):
 
 def get_projects_json(request):
     title_query = request.GET.get("title", "").strip()
-    projects = Project.objects.prefetch_related('starred_by').all()
+    projects = Project.objects.prefetch_related('stars').all()
     
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
     data = []
     for project in projects:
-        starred_users = project.starred_by.all()
+        starred_users = list(project.stars.all())  # Konversi ke list python
         is_starred = request.user in starred_users if request.user.is_authenticated else False
         starred_by_names = ", ".join([u.username for u in starred_users])
         
@@ -237,8 +238,8 @@ def get_projects_json(request):
                 "description": project.description,
                 "tech_stack": project.tech_stack,
                 "project_url": project.project_url,
-                "project_image_url": project.project_image_url,
-                "star_count": starred_users.count(),
+                "thumbnail": project.thumbnail,
+                "star_count": len(starred_users),  # Gunakan len() agar aman dan efisien
                 "is_starred": is_starred,
                 "starred_by_names": starred_by_names,
             }

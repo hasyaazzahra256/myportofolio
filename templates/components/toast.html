@@ -1,8 +1,33 @@
-{% load static %}
-<div id="toast-component" class="toast-component toast-hidden" popover="manual">
-    <div class="toast-content">
-        <h3 id="toast-title" class="toast-title">This is a Sample Title</h3>
-        <p id="toast-message" class="toast-message">This is a Sample Message</p>
+<div id="toast" class="toast-component toast-hidden">
+    <div>
+        <div id="toast-title" class="toast-title">Notifikasi</div>
+        <div id="toast-message" class="toast-message">Pesan notifikasi</div>
     </div>
 </div>
-<script src="{% static 'js/toast.js' %}"></script>
+
+<script class="toast-script">
+    function showToast(title, message, type = 'normal') {
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMessage = document.getElementById('toast-message');
+
+        if (!toast) return;
+
+        toastTitle.innerText = title;
+        toastMessage.innerText = message;
+
+        // Reset tipe class sebelumnya
+        toast.classList.remove('toast-success', 'toast-error', 'toast-normal');
+        toast.classList.add(`toast-${type}`);
+
+        // Tampilkan toast
+        toast.classList.remove('toast-hidden');
+        toast.classList.add('toast-show');
+
+        // Sembunyikan otomatis setelah 3 detik
+        setTimeout(() => {
+            toast.classList.remove('toast-show');
+            toast.classList.add('toast-hidden');
+        }, 3000);
+    }
+</script>

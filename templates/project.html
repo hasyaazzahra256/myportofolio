@@ -150,6 +150,17 @@
     }
     const csrfToken = getCookie('csrftoken') || '';
 
+    // Fungsi Sanitisasi / Escaping Karakter Khusus HTML untuk Mencegah XSS
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     let projectsAbortController;
 
     // Elemen DOM
@@ -174,33 +185,40 @@
         gridContainer.classList.toggle('hide', !showGrid);
     }
 
-    // Merakit elemen HTML Card Project
+    // Merakit elemen HTML Card Project dengan Proteksi XSS (escapeHTML)
     function buildProjectCardElement(item) {
         const project = item.fields;
         const projectId = item.pk;
+
+        // Terapkan escapeHTML pada semua data string buatan user
+        const safeTitle = escapeHTML(project.title);
+        const safeDescription = escapeHTML(project.description);
+        const safeTechStack = escapeHTML(project.tech_stack);
+        const safeProjectUrl = escapeHTML(project.project_url);
+        const safeImageUrl = escapeHTML(project.project_image_url || project.thumbnail || '');
+        const safeStarredByNames = escapeHTML(project.starred_by_names);
 
         const articleElement = document.createElement('article');
         articleElement.className = 'project-card';
 
         // Pengecekan thumbnail / gambar proyek
-        const imageUrl = project.project_image_url || project.thumbnail || '';
-        const imageHtml = imageUrl 
+        const imageHtml = safeImageUrl 
             ? `<div style="border: 1px solid #1a1a1a; padding: 6px; background-color: #fff; margin-bottom: 16px;">
-                 <img src="${imageUrl}" alt="${project.title}" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+                 <img src="${safeImageUrl}" alt="${safeTitle}" style="width: 100%; height: 200px; object-fit: cover; display: block;">
                </div>`
             : '';
 
-        const urlHtml = project.project_url 
+        const urlHtml = safeProjectUrl 
             ? `<div style="margin-top: 12px;">
-                 <a href="${project.project_url}" target="_blank" rel="noopener noreferrer" style="color: #3182ce; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                 <a href="${safeProjectUrl}" target="_blank" rel="noopener noreferrer" style="color: #3182ce; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
                      View Project &rarr;
                  </a>
                </div>`
             : '';
 
-        const techStackHtml = project.tech_stack 
+        const techStackHtml = safeTechStack 
             ? `<p style="color: #D86B88; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
-                 ${project.tech_stack}
+                 ${safeTechStack}
                </p>`
             : '';
 
@@ -224,15 +242,15 @@
         const isStarredClass = project.is_starred ? " is-starred" : "";
         const starText = project.is_starred ? "Unstar" : "Star";
         const starTitle = project.star_count > 0 
-            ? `Dibintangi oleh ${project.starred_by_names}` 
+            ? `Dibintangi oleh ${safeStarredByNames}` 
             : "Jadilah yang pertama memberi star";
 
         const completeCardHtml = `
             ${imageHtml}
             <div class="card-body">
-                <h2>${project.title}</h2>
+                <h2>${safeTitle}</h2>
                 ${techStackHtml}
-                <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.5;">${project.description}</p>
+                <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.5;">${safeDescription}</p>
                 ${urlHtml}
                 
                 <div style="margin-top: 12px;">
@@ -313,7 +331,7 @@
         searchProjects();
     });
 
-    // Menangani penambahan project baru via AJAX (Langkah 3)
+    // Menangani penambahan project baru via AJAX
     if (addProjectForm) {
         addProjectForm.addEventListener('submit', async function(e) {
             e.preventDefault();

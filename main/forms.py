@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import strip_tags
 from main.models import Project, Experience
 
 class ProjectForm(forms.ModelForm):
@@ -13,6 +14,18 @@ class ProjectForm(forms.ModelForm):
             "thumbnail": forms.URLInput(attrs={"placeholder": "https://..."}),
         }
 
+    def clean_title(self):
+        title = self.cleaned_data.get("title")
+        if title:
+            return strip_tags(title)
+        return title
+
+    def clean_description(self):
+        description = self.cleaned_data.get("description")
+        if description:
+            return strip_tags(description)
+        return description
+
 class ExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
@@ -24,3 +37,15 @@ class ExperienceForm(forms.ModelForm):
             "ended_at": forms.TextInput(attrs={"placeholder": "Bulan/Tahun Selesai / Present", "style": "width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;"}),
             "thumbnail": forms.URLInput(attrs={"placeholder": "https://link-gambar-thumbnail.com/image.png", "style": "width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;"}),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data.get("title")
+        if title:
+            return strip_tags(title)
+        return title
+
+    def clean_description(self):
+        description = self.cleaned_data.get("description")
+        if description:
+            return strip_tags(description)
+        return description

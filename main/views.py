@@ -130,18 +130,11 @@ def get_experiences_json(request):
     )
     return HttpResponse(exp_json, content_type="application/json")
 
-def show_project(request):
+def show_projects(request):
     title_query = request.GET.get("title", "").strip()
-    projects = Project.objects.all()
-
-    if title_query:
-        projects = projects.filter(title__icontains=title_query)
-
     context = {
         "name": "Hasya Azzahra Rangkuti",
-        "project_list": projects,
         "title_query": title_query,
-        "is_editor": is_editor(request.user),
     }
     return render(request, "project.html", context)
 

@@ -207,17 +207,32 @@ def toggle_star(request, project_id):
 
 def get_projects_json(request):
     title_query = request.GET.get("title", "").strip()
-    projects = Project.objects.all()
+    projects = Project.objects.prefetch_related('starred_by').all()
     
     if title_query:
         projects = projects.filter(title__icontains=title_query)
+
+    data = []
+    for project in projects:
+        starred_users = project.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ", ".join([u.username for u in starred_users])
         
-    projects_json = serializers.serialize(
-        "json", 
-        projects, 
-        fields=('title', 'description', 'tech_stack', 'project_url', 'thumbnail')
-    )
-    return HttpResponse(projects_json, content_type="application/json")
+        data.append({
+            "pk": str(project.id),
+            "fields": {
+                "title": project.title,
+                "description": project.description,
+                "tech_stack": project.tech_stack,
+                "project_url": project.project_url,
+                "project_image_url": project.project_image_url,
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+        
+    return JsonResponse(data, safe=False)
 
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():

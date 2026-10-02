@@ -41,11 +41,14 @@ class ExperienceForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data.get("title")
         if title:
-            return strip_tags(title)
+            title = strip_tags(title).strip()
+            if not title:
+                raise forms.ValidationError("Judul pengalaman tidak boleh hanya berisi tag HTML.")
+            return title
         return title
 
     def clean_description(self):
         description = self.cleaned_data.get("description")
         if description:
-            return strip_tags(description)
+            return strip_tags(description).strip()
         return description

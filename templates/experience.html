@@ -16,71 +16,315 @@
                     <h1 class="section-title" style="margin: 0;">Experience</h1>
                 </div>
                 
-                {% if user.is_superuser or is_editor %}
-                <a href="{% url 'main:create_experience' %}" style="background-color: #d66782; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
-                    + Add Experience
-                </a>
-                {% endif %}
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    {% if user.is_superuser or is_editor %}
+                    <button type="button"
+                            class="button project-add-button"
+                            popovertarget="add-experience-modal"
+                            style="background-color: #d66782; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 4px; font-weight: bold; font-size: 0.9rem; cursor: pointer;">
+                        <span aria-hidden="true">+</span>
+                        Add Experience
+                    </button>
+                    {% endif %}
+                </div>
             </div>
-            
-            <div class="experience-grid">
-                {% for experience in experience_list %}
-                    <article class="experience-card">
-                        {% if experience.thumbnail %}
-                            <div class="card-image-wrapper">
-                                <img src="{{ experience.thumbnail }}" alt="{{ experience.title }}" class="card-thumbnail">
-                            </div>
-                        {% endif %}
 
-                        <div class="card-body">
-                            <h2>{{ experience.title }}</h2>
-                            
-                            {% if experience.company %}
-                                <p style="color: #d66782; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">
-                                    {{ experience.company }}
-                                </p>
-                            {% endif %}
+            <!-- Modal Popover Tambah Experience -->
+            {% if user.is_superuser or is_editor %}
+            <div id="add-experience-modal" popover class="modal-popover" style="padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; max-width: 500px; width: 90%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: 1.25rem; color: #2d3748;">Tambah Experience Baru</h2>
+                    <button type="button" 
+                            popovertarget="add-experience-modal" 
+                            popovertargetaction="hide" 
+                            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096;">&times;</button>
+                </div>
 
-                            <div class="experience-description">
-                                {{ experience.description|linebreaksbr }}
-                            </div>
-
-                            <p class="experience-date" style="margin-top: 8px;">
-                                {% if experience.start_date %}
-                                    {{ experience.start_date }}
-                                {% endif %}
-                                {% if experience.is_ongoing %}
-                                    - Present
-                                {% elif experience.ended_at %}
-                                    - {{ experience.ended_at }}
-                                {% elif experience.end_date %}
-                                    - {{ experience.end_date }}
-                                {% endif %}
-                            </p>
-
-                            <!-- Hanya tampilkan tombol Edit dan Delete jika user adalah Superuser atau Editor -->
-                            {% if user.is_superuser or is_editor %}
-                            <div style="display: flex; gap: 0.5rem; margin-top: 15px;">
-                                <a href="{% url 'main:edit_experience' experience.id %}" 
-                                   style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                   Edit
-                                </a>
-                                <a href="{% url 'main:delete_experience' experience.id %}" 
-                                   onclick="return confirm('Apakah kamu yakin ingin menghapus pengalaman ini?');" 
-                                   style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
-                                   Delete
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </article>
-                {% empty %}
-                    <div class="empty-state">
-                        <p>No experiences to display yet.</p>
+                <form id="add-experience-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label for="id_exp_title" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Judul / Peran *</label>
+                        <input type="text" id="id_exp_title" name="title" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
                     </div>
-                {% endfor %}
+
+                    <div>
+                        <label for="id_exp_description" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Deskripsi *</label>
+                        <textarea id="id_exp_description" name="description" rows="3" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="id_exp_start_date" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Bulan/Tahun Mulai</label>
+                        <input type="text" id="id_exp_start_date" name="start_date" placeholder="Jan 2025" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="id_exp_ended_at" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">Bulan/Tahun Selesai</label>
+                        <input type="text" id="id_exp_ended_at" name="ended_at" placeholder="Present / Des 2025" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="id_exp_thumbnail" style="display: block; margin-bottom: 0.3rem; font-weight: bold; font-size: 0.85rem; color: #4a5568;">URL Gambar Thumbnail</label>
+                        <input type="url" id="id_exp_thumbnail" name="thumbnail" placeholder="https://example.com/image.png" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+                        <button type="button" 
+                                popovertarget="add-experience-modal" 
+                                popovertargetaction="hide" 
+                                style="background-color: #e2e8f0; color: #4a5568; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                id="submit-experience-btn" 
+                                style="background-color: #d66782; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Simpan Experience
+                        </button>
+                    </div>
+                </form>
             </div>
+            {% endif %}
+
+            <!-- Form Pencarian AJAX -->
+            <form id="experience-search-form" class="project-search" style="margin-bottom: 1.5rem;">
+                <input type="search"
+                       id="search-exp-input"
+                       name="title"
+                       value="{{ title_query|default:'' }}"
+                       placeholder="Cari berdasarkan judul pengalaman..."
+                       class="project-search__input"
+                       aria-label="Cari berdasarkan judul pengalaman">
+                <button type="submit" style="background-color: #d66782; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">
+                    Cari
+                </button>
+            </form>
+
+            <!-- Loading State -->
+            <div id="loading" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>Memuat data experience...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>Gagal memuat data experience. Silakan coba lagi.</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty" class="empty-state hide" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                <p>No experiences to display yet.</p>
+            </div>
+
+            <!-- Experience Grid Container -->
+            <div id="grid" class="experience-grid hide"></div>
         </div>
     </section>
 </main>
+
+<!-- Script AJAX Fetch API -->
+<script>
+    const BASE_EXP_ENDPOINT = "{% url 'main:get_experiences_json' %}";
+    const CREATE_EXP_ENDPOINT = "{% url 'main:create_experience_ajax' %}";
+    const IS_CAN_MANAGE = ("{{ user.is_superuser|yesno:'true,false' }}" === "true") || ("{{ is_editor|yesno:'true,false' }}" === "true");
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrfToken = getCookie('csrftoken') || '';
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    let expAbortController;
+
+    const loadingState = document.getElementById('loading');
+    const errorState = document.getElementById('error');
+    const emptyState = document.getElementById('empty');
+    const gridContainer = document.getElementById('grid');
+    const searchForm = document.getElementById('experience-search-form');
+    const searchInput = document.getElementById('search-exp-input');
+    const addExpForm = document.getElementById('add-experience-form');
+    const addExpModal = document.getElementById('add-experience-modal');
+
+    const SEARCH_DEBOUNCE_DELAY = 300;
+    let searchDebounceTimer;
+
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingState.classList.toggle('hide', !showLoading);
+        errorState.classList.toggle('hide', !showError);
+        emptyState.classList.toggle('hide', !showEmpty);
+        gridContainer.classList.toggle('hide', !showGrid);
+    }
+
+    function buildExperienceCardElement(item) {
+        const exp = item.fields;
+        const expId = item.pk;
+
+        const safeTitle = escapeHTML(exp.title);
+        const safeDescription = escapeHTML(exp.description).replace(/\n/g, '<br>');
+        const safeStartDate = escapeHTML(exp.start_date);
+        const safeEndedAt = escapeHTML(exp.ended_at);
+        const safeImageUrl = escapeHTML(exp.thumbnail || '');
+
+        const articleElement = document.createElement('article');
+        articleElement.className = 'experience-card';
+
+        const imageHtml = safeImageUrl 
+            ? `<div class="card-image-wrapper">
+                 <img src="${safeImageUrl}" alt="${safeTitle}" class="card-thumbnail">
+               </div>`
+            : '';
+
+        const editUrl = "{% url 'main:edit_experience' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', expId);
+        const deleteUrl = "{% url 'main:delete_experience' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', expId);
+
+        const manageHtml = IS_CAN_MANAGE 
+            ? `<div style="display: flex; gap: 0.5rem; margin-top: 15px;">
+                 <a href="${editUrl}" style="background-color: #f7fafc; color: #4a5568; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">Edit</a>
+                 <a href="${deleteUrl}" onclick="return confirm('Apakah kamu yakin ingin menghapus pengalaman ini?');" style="background-color: #f7fafc; color: #d66782; border: 1px solid #cbd5e0; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">Delete</a>
+               </div>`
+            : '';
+
+        let dateRangeText = safeStartDate;
+        if (exp.is_ongoing) {
+            dateRangeText += ' - Present';
+        } else if (safeEndedAt) {
+            dateRangeText += ` - ${safeEndedAt}`;
+        }
+
+        const completeCardHtml = `
+            ${imageHtml}
+            <div class="card-body">
+                <h2>${safeTitle}</h2>
+                <div class="experience-description">${safeDescription}</div>
+                ${dateRangeText ? `<p class="experience-date" style="margin-top: 8px;">${dateRangeText}</p>` : ''}
+                ${manageHtml}
+            </div>
+        `;
+
+        articleElement.innerHTML = completeCardHtml;
+        return articleElement;
+    }
+
+    async function fetchExperiences(searchQuery = "") {
+        if (expAbortController) expAbortController.abort();
+        expAbortController = new AbortController();
+
+        try {
+            displayPageSection({ showLoading: true });
+            
+            const url = searchQuery 
+                ? `${BASE_EXP_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` 
+                : BASE_EXP_ENDPOINT;
+
+            const response = await fetch(url, {
+                headers: { 'Accept': 'application/json' },
+                signal: expAbortController.signal,
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            const expData = await response.json();
+
+            if (expData.length === 0) {
+                displayPageSection({ showEmpty: true });
+            } else {
+                gridContainer.innerHTML = '';
+                expData.forEach(item => {
+                    gridContainer.appendChild(buildExperienceCardElement(item));
+                });
+                displayPageSection({ showGrid: true });
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            console.error('Error loading experiences:', error);
+            displayPageSection({ showError: true });
+        }
+    }
+
+    function searchExperiences() {
+        fetchExperiences(searchInput.value.trim());
+    }
+
+    searchInput.addEventListener("input", function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+            searchExperiences();
+        }, SEARCH_DEBOUNCE_DELAY);
+    });
+
+    searchForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        searchExperiences();
+    });
+
+    if (addExpForm) {
+        addExpForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(addExpForm);
+            const submitBtn = document.getElementById('submit-experience-btn');
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Menyimpan...';
+
+                const response = await fetch(CREATE_EXP_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errRes = await response.json().catch(() => ({}));
+                    throw new Error(errRes.message || 'Gagal menyimpan experience');
+                }
+
+                addExpForm.reset();
+                if (addExpModal && addExpModal.hidePopover) {
+                    addExpModal.hidePopover();
+                }
+
+                if (typeof showToast === 'function') {
+                    showToast('Berhasil!', 'Experience baru berhasil ditambahkan.', 'success');
+                }
+
+                fetchExperiences(searchInput.value.trim());
+
+            } catch (error) {
+                console.error('Error adding experience:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Gagal!', error.message || 'Terjadi kesalahan saat menyimpan experience.', 'error');
+                } else {
+                    alert(error.message || 'Gagal menyimpan experience. Silakan coba lagi.');
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Experience';
+            }
+        });
+    }
+
+    fetchExperiences(searchInput.value.trim());
+</script>
 {% endblock content %}

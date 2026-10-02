@@ -67,13 +67,32 @@ def logout_user(request):
     return response
 
 def show_experience(request):
-    experiences = Experience.objects.all()
+    title_query = request.GET.get("title", "").strip()
     context = {
         "name": "Hasya Azzahra Rangkuti",
-        "experience_list": experiences,
+        "title_query": title_query,
+        "form": ExperienceForm(),
         "is_editor": is_editor(request.user),
     }
     return render(request, "experience.html", context)
+
+@require_POST
+def create_experience_ajax(request):
+    if not (request.user.is_superuser or is_editor(request.user)):
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio atau editor yang dapat menambahkan pengalaman."},
+            status=403,
+        )
+    
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message": "Pengalaman berhasil ditambahkan.", "pk": str(experience.id)},
+            status=201,
+        )
+    
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def create_experience(request):
@@ -122,13 +141,27 @@ def delete_experience(request, id):
     return redirect("main:show_experience")
 
 def get_experiences_json(request):
+    title_query = request.GET.get("title", "").strip()
     experiences = Experience.objects.all()
-    exp_json = serializers.serialize(
-        "json", 
-        experiences, 
-        fields=('title', 'company', 'description', 'start_date', 'end_date', 'ended_at', 'is_ongoing', 'thumbnail')
-    )
-    return HttpResponse(exp_json, content_type="application/json")
+    
+    if title_query:
+        experiences = experiences.filter(title__icontains=title_query)
+
+    data = []
+    for exp in experiences:
+        data.append({
+            "pk": str(exp.id),
+            "fields": {
+                "title": exp.title,
+                "description": exp.description,
+                "start_date": exp.start_date or "",
+                "ended_at": exp.ended_at or "",
+                "thumbnail": exp.thumbnail or "",
+                "is_ongoing": exp.is_ongoing,
+            }
+        })
+        
+    return JsonResponse(data, safe=False)
 
 def show_project(request):
     title_query = request.GET.get("title", "").strip()

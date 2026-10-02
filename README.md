@@ -136,3 +136,37 @@ Meski AI sangat membantu dalam mempercepat penyusunan logika pengkondisian dan k
 3. **Pembersihan Routing dan URL Duplikat**:
    - **Masalah**: Pada berkas `urls.py`, terdapat beberapa deklarasi path yang berulang (duplikat path `login/` dan `register/`).
    - **Perbaikan**: Saya merapikan isi `urls.py` secara manual dengan menghapus baris duplikat agar pemanggilan *named URL* berjalan bersih dan tanpa potensi bentrok routing.
+
+### Tugas 5
+
+1. *Debouncing* itu teknik buat menunda pemanggilan fungsi pencarian sampai pengguna benar-benar berhenti mengetik selama jeda waktu tertentu (misalnya 300 milidetik). Teknik ini penting banget di fitur pencarian AJAX karena kalau enggak pakai *debouncing*, browser bakal ngirim *request* ke server untuk setiap satu huruf yang kita ketik. Contohnya, kalau kita ngetik "Software", bakal ada 8 kali pemanggilan API ke server secara beruntun. Dengan *debouncing*, *request* baru dikirim 1 kali saja setelah kita selesai mengetik, jadi bisa menghemat *bandwidth*, meringankan beban server/database, dan bikin aplikasi terasa lebih cepat tanpa *lag*.
+
+2. Fungsi utama atribut `await` saat memanggil `fetch()` adalah buat memberi tahu JavaScript supaya menunggu proses pengambilan data dari *network/server* selesai terlebih dahulu sebelum mengeksekusi baris kode berikutnya. Kalau kita enggak pakai `await` (dan juga enggak pakai `.then()`), `fetch()` cuma bakal mengembalikan objek *Promise* yang statusnya masih *pending*. Akibatnya, JavaScript langsung lanjut jalan ke baris bawahnya padahal datanya belum selesai dimuat, yang bikin kodenya *error* (`undefined`), gagal *render* komponen di DOM, atau nampilkan data kosong.
+
+3. Serangan XSS (*Cross-Site Scripting*) adalah kerentanan keamanan web di mana penyerang berhasil memasukkan skrip JavaScript jahat ke dalam database atau input web yang kemudian tereksekusi di browser pengunjung lain. Data yang ditampilkan lewat AJAX/JavaScript jauh lebih rentan terhadap XSS dibanding template Django biasa karena saat kita menggunakan `.innerHTML` atau *template literals* di JavaScript, browser akan langsung menganggap string tersebut sebagai HTML mentah tanpa memfilter karakter berbahaya (seperti `<` atau `>`). Sementara di Django template biasa, Django punya fitur *auto-escaping* otomatis yang langsung mengubah tag berbahaya menjadi teks biasa sebelum di-render ke layar.
+
+### Dokumentasi & AI Disclosure
+Proyek pada Tugas 5 ini dikembangkan dengan memanfaatkan AI (Gemini) sebagai *collaborator*, *code reviewer*, serta alat *debugging* untuk fitur pencarian AJAX, modal popover, dan pengamanan XSS.
+
+### Tools & Log Prompting
+Tool Utama: Gemini 2.5 Flash / Pro.  
+Log Prompting Ringkas:
+1. "Bagaimana cara menerapkan fungsi search debouncing dengan delay 300ms di JavaScript untuk input pencarian AJAX?"
+2. "Bantu periksa kenapa tombol Hapus dan Star di kartu proyek yang dibuat lewat JavaScript innerHTML mengalami error CSRF token."
+3. "Bagaimana cara melakukan sanitasi input teks di Django Form menggunakan strip_tags untuk mencegah XSS?"
+
+### Keterbatasan AI dan Perbaikan Manual yang Saya Lakukan
+
+Walaupun AI sangat membantu mempercepat penulisan skrip AJAX dan pemecahan *error*, tetap ada beberapa kendala logika dan struktur kode yang harus saya perbaiki secara manual:
+
+1. **Penyesuaian Nama Field Model (`thumbnail` vs `project_image_url`)**:
+   * Masalah: AI sempat membuat skrip form modal dan fungsi JSON dengan nama field `project_image_url`, padahal di `models.py` dan `ProjectForm` milik saya nama field gambar yang digunakan adalah `thumbnail`.
+   * Perbaikan: Saya mengedit ulang atribut `name="thumbnail"` pada input HTML di `project.html` dan menyesuaikan pemanggilan atribut di `views.py` agar data gambar tersimpan dengan benar ke database.
+
+2. **Error Handling & Permission pada Endpoint AJAX (`create_project_ajax`)**:
+   * Masalah: AI secara default hanya mengecek hak akses `is_superuser` di view AJAX, sehingga pengguna dengan grup *Editor* tidak bisa menambahkan data proyek atau pengalaman via modal.
+   * Perbaikan: Saya memperbarui pemeriksaan *permission* di `views.py` menggunakan `if not (request.user.is_superuser or is_editor(request.user))` serta menyesuaikan penanganan pesan *error* JSON di skrip `fetch()` JavaScript.
+
+3. **Perbaikan Mismatched Function Name (`show_project` vs `show_projects`)**:
+   * Masalah: Terjadi `ImportError` saat menjalankan server karena adanya ketidakcocokan nama fungsi *view* antara `urls.py` dan `views.py`.
+   * Perbaikan: Saya menyelaraskan nama fungsi di `views.py` menjadi `show_project` dan memperbaiki pengambilan relasi *stars* (`stars.all()`) menggunakan `list()` dan `len()` agar tidak memicu *500 Internal Server Error*.

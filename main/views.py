@@ -299,6 +299,11 @@ def contact_delete(request, pk):
     contact.delete()
     return HttpResponse("")
 
+def contact_search(request):
+    query = request.GET.get("q", "").strip()
+    contacts = Contact.objects.filter(name__icontains=query) if query else Contact.objects.all()
+    return render(request, "_contact_rows.html", {"contacts": contacts})
+
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():
         User.objects.create_superuser('hasya', 'hasyazahra25@gmail.com', 'Hasya2506@')

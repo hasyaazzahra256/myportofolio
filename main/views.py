@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from main.models import Experience, Project  
+from main.models import Experience, Project, Contact 
 from main.forms import ProjectForm, ExperienceForm 
 
 def is_editor(user):
@@ -279,6 +279,10 @@ def get_projects_json(request):
         })
         
     return JsonResponse(data, safe=False)
+
+def contact_list(request):
+    contacts = Contact.objects.all()
+    return render(request, "contact_index.html", {"contacts": contacts})
 
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():

@@ -2,7 +2,7 @@ from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, create_experience_ajax, get_experiences_json,
     show_project, create_project, edit_project, delete_project, toggle_star, create_project_ajax, get_projects_json, register, login_user, logout_user, 
-    contact_list, contact_add, contact_delete, contact_search, create_admin_pws
+    contact_list, contact_add, contact_delete, contact_search, contact_edit, contact_row, contact_update, create_admin_pws
 )
 
 app_name = "main"
@@ -38,4 +38,8 @@ urlpatterns = [
     path("contacts/add/", contact_add, name="contact_add"),
     path("contacts/<int:pk>/delete/", contact_delete, name="contact_delete"),
     path("contacts/search/", contact_search, name="contact_search"),
+    path("contacts/<int:pk>/delete/", contact_delete, name="contact_delete"),
+    path("contacts/<int:pk>/edit/", contact_edit, name="contact_edit"),
+    path("contacts/<int:pk>/row/", contact_row, name="contact_row"),
+    path("contacts/<int:pk>/update/", contact_update, name="contact_update"),
 ]

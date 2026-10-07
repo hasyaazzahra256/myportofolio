@@ -1,7 +1,7 @@
 import json
 import datetime
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, QueryDict
 from django.core import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -303,6 +303,23 @@ def contact_search(request):
     query = request.GET.get("q", "").strip()
     contacts = Contact.objects.filter(name__icontains=query) if query else Contact.objects.all()
     return render(request, "_contact_rows.html", {"contacts": contacts})
+
+def contact_edit(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    return render(request, "_contact_edit_row.html", {"contact": contact})
+
+def contact_row(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    return render(request, "_contact_row.html", {"contact": contact})
+
+@require_http_methods(["PUT"])
+def contact_update(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    data = QueryDict(request.body)
+    contact.name = data.get("name", contact.name)
+    contact.email = data.get("email", contact.email)
+    contact.save()
+    return render(request, "_contact_row.html", {"contact": contact})
 
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():

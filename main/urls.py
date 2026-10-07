@@ -1,7 +1,7 @@
 from django.urls import path
 from main.views import (
     show_main, show_experience, create_experience, edit_experience, delete_experience, create_experience_ajax, get_experiences_json,
-    show_project, create_project, edit_project, delete_project, toggle_star, create_project_ajax, get_projects_json, register, login_user, contact_list, logout_user,
+    show_project, create_project, edit_project, delete_project, toggle_star, create_project_ajax, get_projects_json, register, login_user, logout_user, contact_list, contact_add,
     create_admin_pws
 )
 
@@ -35,4 +35,5 @@ urlpatterns = [
 
     # contact URLs
     path("contacts/", contact_list, name="contact_list"),
+    path("contacts/add/", contact_add, name="contact_add"),
 ]

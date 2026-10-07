@@ -284,6 +284,15 @@ def contact_list(request):
     contacts = Contact.objects.all()
     return render(request, "contact_index.html", {"contacts": contacts})
 
+def contact_add(request):
+    if request.method == "POST":
+        Contact.objects.create(
+            name=request.POST.get("name"),
+            email=request.POST.get("email"),
+        )
+    contacts = Contact.objects.all()
+    return render(request, "_contact_rows.html", {"contacts": contacts})
+
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():
         User.objects.create_superuser('hasya', 'hasyazahra25@gmail.com', 'Hasya2506@')

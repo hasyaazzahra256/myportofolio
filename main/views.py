@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from main.models import Experience, Project, Contact 
@@ -292,6 +292,12 @@ def contact_add(request):
         )
     contacts = Contact.objects.all()
     return render(request, "_contact_rows.html", {"contacts": contacts})
+
+@require_http_methods(["DELETE"])
+def contact_delete(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    contact.delete()
+    return HttpResponse("")
 
 def create_admin_pws(request):
     if not User.objects.filter(username='hasya').exists():

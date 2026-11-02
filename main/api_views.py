@@ -15,7 +15,7 @@ from main.serializers import ProjectSerializer
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def project_list(request):
     if request.method in ("GET", "HEAD"):
-        projects = Project.objects.prefetch_related("starred_by").order_by("title", "id")
+        projects = Project.objects.prefetch_related("stars").order_by("title", "id")
         title = request.query_params.get("title", "").strip()
         if title:
             projects = projects.filter(title__icontains=title)
@@ -23,7 +23,7 @@ def project_list(request):
             projects, many=True, context={"request": request},
         )
         return Response(serializer.data)
-
+    
     serializer = ProjectSerializer(data=request.data, context={"request": request})
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -34,7 +34,7 @@ def project_list(request):
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def project_detail(request, project_id):
     project = get_object_or_404(
-        Project.objects.prefetch_related("starred_by"), pk=project_id,
+        Project.objects.prefetch_related("stars"), pk=project_id,
     )
     if request.method in ("GET", "HEAD"):
         serializer = ProjectSerializer(project, context={"request": request})
@@ -42,7 +42,7 @@ def project_detail(request, project_id):
     if request.method == "DELETE":
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+    
     serializer = ProjectSerializer(
         project, data=request.data, partial=request.method == "PATCH",
         context={"request": request},
@@ -56,9 +56,9 @@ def project_detail(request, project_id):
 @permission_classes([IsAuthenticated])
 def project_star(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    if project.starred_by.filter(pk=request.user.pk).exists():
-        project.starred_by.remove(request.user)
+    if project.stars.filter(pk=request.user.pk).exists():
+        project.stars.remove(request.user)
     else:
-        project.starred_by.add(request.user)
+        project.stars.add(request.user)
     serializer = ProjectSerializer(project, context={"request": request})
     return Response(serializer.data)

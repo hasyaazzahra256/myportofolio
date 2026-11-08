@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
-from main.models import Project
+from main.models import Project, Experience
 
 class ProjectAPITest(APITestCase):
     def setUp(self):
@@ -132,3 +132,43 @@ class ProjectAPITest(APITestCase):
             self.list_url, self.payload, format="json", HTTP_X_CSRFTOKEN=token,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+class ExperienceAPITest(APITestCase):
+    def setUp(self):
+        self.owner = User.objects.create_superuser(username="owner", password="password")
+        self.visitor = User.objects.create_user(username="visitor", password="password")
+        self.editor_group, _ = Group.objects.get_or_create(name="Editor")
+        self.editor = User.objects.create_user(username="editor", password="password")
+        self.editor.groups.add(self.editor_group)
+
+        self.exp = Experience.objects.create(title="Software Engineer", description="Dev")
+        self.list_url = reverse("api:experience-list")
+        self.detail_url = reverse("api:experience-detail", args=[self.exp.id])
+        self.star_url = reverse("api:experience-star", args=[self.exp.id])
+        self.payload = {"title": "Data Analyst", "description": "Analyst"}
+
+    def test_visitor_and_user_cannot_write(self):
+        for user in (None, self.visitor):
+            self.client.force_authenticate(user=user)
+            self.assertEqual(self.client.post(self.list_url, self.payload).status_code, 403)
+            self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+
+    def test_editor_can_patch_but_not_create_or_delete(self):
+        self.client.force_authenticate(user=self.editor)
+        self.assertEqual(self.client.post(self.list_url, self.payload).status_code, 403)
+        self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+        response = self.client.patch(self.detail_url, {"title": "Updated Title"}, format="json")
+        self.assertEqual(response.status_code, 200)
+
+    def test_owner_can_manage(self):
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(self.list_url, self.payload, format="json")
+        self.assertEqual(response.status_code, 201)
+
+    def test_csrf_protection_with_session(self):
+        client = APIClient(enforce_csrf_checks=True)
+        client.login(username="owner", password="password")
+        page = client.get(self.list_url, HTTP_ACCEPT="text/html")
+        token = client.cookies["csrftoken"].value
+        response = client.post(self.list_url, self.payload, format="json", HTTP_X_CSRFTOKEN=token)
+        self.assertEqual(response.status_code, 201)

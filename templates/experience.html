@@ -124,8 +124,12 @@
 <!-- Script AJAX DRF Integration -->
 <script>
     const BASE_EXP_ENDPOINT = "{% url 'api:experience-list' %}";
-    const DETAIL_EXP_ENDPOINT = "{% url 'api:experience-detail' 0 %}".replace('/0/', '/');
-    const STAR_EXP_ENDPOINT = "{% url 'api:experience-star' 0 %}".replace('/0/', '/');
+    const DETAIL_EXP_ENDPOINT = "{% url 'api:experience-detail' '00000000-0000-0000-0000-000000000000' %}";
+    const STAR_EXP_ENDPOINT = "{% url 'api:experience-star' '00000000-0000-0000-0000-000000000000' %}";
+
+    function experienceEndpoint(pattern, id) {
+        return pattern.replace('00000000-0000-0000-0000-000000000000', id);
+    }
     
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
     const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";

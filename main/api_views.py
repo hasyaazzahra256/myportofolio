@@ -7,7 +7,7 @@ from rest_framework.decorators import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from main.models import Project, Experience 
-from main.permissions import IsPortfolioOwnerOrReadOnly
+from main.permissions import IsPortfolioOwnerOrReadOnly, IsExperienceOwnerOrEditorOrReadOnly
 from main.serializers import ProjectSerializer, ExperienceSerializer
 
 @api_view(["GET", "HEAD", "POST"])
@@ -65,7 +65,7 @@ def project_star(request, project_id):
 
 @api_view(["GET", "HEAD", "POST"])
 @authentication_classes([SessionAuthentication])
-@permission_classes([IsPortfolioOwnerOrReadOnly])
+@permission_classes([IsExperienceOwnerOrEditorOrReadOnly])
 def experience_list(request):
     if request.method in ("GET", "HEAD"):
         experiences = Experience.objects.prefetch_related("stars").order_by("-id")
@@ -84,7 +84,7 @@ def experience_list(request):
 
 @api_view(["GET", "HEAD", "PUT", "PATCH", "DELETE"])
 @authentication_classes([SessionAuthentication])
-@permission_classes([IsPortfolioOwnerOrReadOnly])
+@permission_classes([IsExperienceOwnerOrEditorOrReadOnly])
 def experience_detail(request, pk):
     experience = get_object_or_404(
         Experience.objects.prefetch_related("stars"), pk=pk,

@@ -170,3 +170,56 @@ Walaupun AI sangat membantu mempercepat penulisan skrip AJAX dan pemecahan *erro
 3. **Perbaikan Mismatched Function Name (`show_project` vs `show_projects`)**:
    * Masalah: Terjadi `ImportError` saat menjalankan server karena adanya ketidakcocokan nama fungsi *view* antara `urls.py` dan `views.py`.
    * Perbaikan: Saya menyelaraskan nama fungsi di `views.py` menjadi `show_project` dan memperbaiki pengambilan relasi *stars* (`stars.all()`) menggunakan `list()` dan `len()` agar tidak memicu *500 Internal Server Error*.
+
+### Tugas 6
+
+1. **Apa itu REST dan Alasan Mengapa JSON Saja Belum Cukup Disebut RESTful, serta Perbedaan PUT vs PATCH:**
+   * **Pengertian REST & RESTful**: REST (*Representational State Transfer*) adalah standar arsitektur komunikasi web yang memanfaatkan protokol HTTP secara *stateless* untuk mengelola sumber daya (*resource*). Mengembalikan format JSON saja **belum cukup** untuk membuat sebuah API disebut *RESTful*. Sebuah API baru bisa disebut *RESTful* jika mematuhi kendala arsitektural REST (*REST constraints*), seperti penggunaan *HTTP Method* yang tepat dan semantik (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`), status kode HTTP yang sesuai (`200 OK`, `201 Created`, `400 Bad Request`, `403 Forbidden`, `404 Not Found`, `204 No Content`), bersifat *stateless*, serta menerapkan prinsip *HATEOAS* (Hypermedia as the Engine of Application State) di mana respons juga menyediakan tautan/navigasi ke aksi sumber daya terkait.
+   * **Perbedaan PUT dan PATCH**:
+     * **PUT**: Digunakan untuk mengganti/memperbarui *seluruh* data objek secara utuh (*full replacement*). Jika ada *field* yang tidak dikirim di dalam *payload* `PUT`, maka *field* tersebut akan di-reset atau dianggap kosong/null.
+       * *Contoh*: Digunakan saat mengedit formulir data profil secara lengkap di mana semua kolom diisi ulang secara menyeluruh.
+     * **PATCH**: Digunakan untuk memperbarui *sebagian* data saja (*partial update*). Hanya *field* yang dikirim di dalam *payload* yang akan diubah, sedangkan *field* lainnya di database tetap utuh tanpa terpengaruh.
+       * *Contoh*: Digunakan saat men-toggle status *star* sebuah proyek atau mengedit judul pengalaman saja tanpa perlu mengirim ulang deskripsi dan tanggalnya.
+
+2. **Peran Serializer di Django REST Framework (DRF) dan Keunggulannya dibanding JsonResponse Manual:**
+   * **Peran Serializer**: Serializer berfungsi sebagai jembatan dua arah (penerjemah). Serializer mengubah objek kompleks Django ORM (*Model Instance*) menjadi tipe data Python *native* yang bisa dirender dengan mudah menjadi JSON (proses *serialization*). Selain itu, Serializer juga menerima data JSON dari request untuk divalidasi dan diubah kembali menjadi objek *Model Instance* yang siap disimpan ke database (proses *deserialization*).
+   * **Keunggulan dibanding `JsonResponse` manual**:
+     * **Validasi Otomatis & Terpusat**: DRF Serializer menangani validasi tipe data, pemeriksaan field wajib, sanitasi teks (`strip_tags`), hingga *custom validation* (`validate_<field>`) secara otomatis. Jika data invalid, Serializer langsung menghasilkan struktur error yang rapi dengan HTTP status `400 Bad Request`.
+     * **Manajemen Field Read-Only & Calculated Fields**: Kita bisa menambahkan field hasil perhitungan (*computed fields* seperti `star_count` atau `is_starred`) dan menjamin field sensitif/internal tidak bisa dimanipulasi oleh user karena diset sebagai `read_only_fields`.
+     * **Kode Lebih Bersih & DRY**: Nggak perlu lagi nulis perulangan dictionary manual satu per satu seperti di `JsonResponse(list(data.values()))`. Cukup panggil `Serializer(data, many=True).data`.
+
+3. **Perbedaan Autentikasi vs Otorisasi dan Alasan Pentingnya Permission Class di Server:**
+   * **Autentikasi vs Otorisasi**: 
+     * **Autentikasi (*Who are you?*)**: Proses untuk mengonfirmasi identitas pengguna (misalnya mengecek username/password atau session cookie saat pengguna login).
+     * **Otorisasi (*What can you do?*)**: Proses mengecek apakah pengguna yang sudah terautentikasi tersebut memiliki izin/hak akses untuk melakukan tindakan tertentu pada suatu sumber daya.
+   * **Alasan Harus Diperiksa di Server (*Permission Class*)**: Menyembunyikan tombol Edit/Delete di template HTML cuma proteksi visual di tingkat tampilan (*User Interface*). Pengunjung nakal atau *attacker* masih bisa menembak *endpoint* API backend secara langsung memakai tools seperti `curl`, Postman, atau Fetch API lewat konsol browser. Jika server tidak diproteksi dengan `permission_classes`, backend akan tetap memproses permintaan destruktif tersebut. Oleh karena itu, pemeriksaan hak akses wajib dieksekusi di level server backend.
+
+4. **Kebutuhan Token CSRF pada SessionAuthentication dan Keterbatasan `force_authenticate` dalam Testing:**
+   * **Mengapa Tetap Butuh Token CSRF di SessionAuthentication**: `SessionAuthentication` mengandalkan cookie sesi yang disimpan oleh browser. Browser secara otomatis menyertakan cookie sesi ini pada setiap permintaan HTTP yang dikirimkan ke domain server kita, termasuk jika permintaan tersebut dipicu secara tersembunyi oleh situs web lain yang berbahaya (*Cross-Site Request Forgery* / CSRF). Token CSRF berfungsi sebagai rahasia acak tambahan yang wajib dikirimkan di header HTTP (`X-CSRFToken`) untuk membuktikan bahwa permintaan perubahan data benar-benar dipicu oleh antarmuka web kita yang sah, bukan jebakan situs eksternal.
+   * **Keterbatasan `force_authenticate`**: Metode `force_authenticate` pada DRF `APITestCase` bekerja dengan cara menyuntikkan (*inject*) objek `user` langsung ke dalam instance `request` tanpa melewati alur autentikasi berbasis *session* dan tanpa memicu *middleware* CSRF Django. Karena *middleware* CSRF dilewati saat `force_authenticate` dipakai, tes tidak bisa membuktikan apakah proteksi CSRF bekerja dengan baik. Untuk membuktikannya, kita wajib menggunakan `APIClient(enforce_csrf_checks=True)` yang dikombinasikan dengan `.login()`.
+
+### Dokumentasi & AI Disclosure
+Pada pengerjaan Tugas 6 ini, saya kembali menggunakan AI (Gemini) sebagai *pair-programmer*, panduan penyusunan DRF Serializer & Permissions, serta alat *debugging* saat menghadapi kendala integrasi AJAX dan penyesuaian tes API.
+
+### Tools & Log Prompting
+* **Tool Utama**: Gemini 2.5 Flash / Pro.
+* **Log Prompting Ringkas**:
+  1. *"Bagaimana cara menyesuaikan IsPortfolioOwnerOrReadOnly di DRF agar mengizinkan grup Editor melakukan aksi PUT dan PATCH tetapi melarang POST dan DELETE?"*
+  2. *"Bantu selesaikan error NoReverseMatch pada APITestCase untuk model Experience yang menggunakan UUID sebagai primary key."*
+  3. *"Bagaimana cara menangani permintaan fetch() AJAX di frontend experience.html agar mengirimkan header X-CSRFToken dan menampilkan toast error saat API mengembalikan HTTP status 400 atau 403?"*
+
+### Keterbatasan AI dan Perbaikan Manual yang Saya Lakukan
+
+Walaupun AI sangat membantu mempercepat penulisan skrip serializer dan penyusunan fungsi API views DRF, tetap ada beberapa kendala struktur yang harus saya perbaiki secara manual:
+
+1. **Penyesuaian Path Converter UUID pada `api_urls.py`**:
+   * **Masalah**: AI sempat menyarankan konverter URL standar `<int:pk>` untuk rute detail `Experience`. Hal ini menyebabkan error `NoReverseMatch` saat tes dijalankan karena model `Experience` di proyek saya menggunakan tipe data `UUIDField`.
+   * **Perbaikan**: Saya memperbaikinya secara manual pada berkas `api_urls.py` dengan mengubah pola path converter menjadi `<uuid:pk>` agar pas dengan tipe data primary key `Experience`.
+
+2. **Pemisahan Permission Class antara Projects dan Experience**:
+   * **Masalah**: Ketika saya mengubah logika `IsPortfolioOwnerOrReadOnly` agar Editor dapat melakukan `PUT`/`PATCH` pada Experience, tes bawaan Tutorial 07 untuk `Project` mengalami kegagalan (*assertion error 403 != 200*) karena tes tutorial mewajibkan Editor ditolak saat mengedit proyek tutorial.
+   * **Perbaikan**: Saya memisahkan permission class di `main/permissions.py` secara manual dengan membuat `IsExperienceOwnerOrEditorOrReadOnly` khusus untuk fitur Experience, sehingga aturan baru bagi Editor berjalan sempurna di Experience tanpa merusak integritas tes Tutorial 07.
+
+3. **Perbaikan Format Dummy ID pada JavaScript Template (`experience.html`)**:
+   * **Masalah**: Kode JavaScript yang dihasilkan AI menggunakan angka `0` sebagai *placeholder* reverse URL Django (`reverse("api:experience-detail", args=[0])`), yang memicu error saat rendering template karena Django menolak angka `0` untuk rute berbasis UUID.
+   * **Perbaikan**: Saya mengganti *placeholder* reverse URL di `experience.html` secara manual menggunakan string dummy UUID valid `'00000000-0000-0000-0000-000000000000'`, lalu me-replace string tersebut secara dinamis dengan ID pengalaman riil saat request *fetch* dijalankan.
